@@ -168,6 +168,7 @@ export function useComparisonFlow() {
   return {
     leftItem: leftItem as FilmItem | undefined,
     rightItem: rightItem as FilmItem | undefined,
+    totalCount: states.length,
     activeCount: activeStates.length,
     comparisonCount: comparisons.length,
     feedback,

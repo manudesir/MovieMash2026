@@ -26,6 +26,7 @@ export function ComparisonScreen({ flow }: ComparisonScreenProps) {
       <header className="comparison-status" aria-label="Session progress">
         <span>{flow.comparisonCount} picks</span>
         <span>{flow.activeCount} active</span>
+        <span>{flow.totalCount} total</span>
       </header>
 
       <section className="comparison-stage" aria-label="Choose one item">
