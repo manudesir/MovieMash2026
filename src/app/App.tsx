@@ -4,10 +4,16 @@ import { filmItems } from '../modules/content/filmSource';
 import { ComparisonScreen } from '../modules/comparison/ComparisonScreen';
 import { initializeRankingStates } from '../modules/persistence/rankingRepository';
 import { RankingPage } from '../modules/ranking/RankingPage';
+import { DevDatabaseTransfer } from './DevDatabaseTransfer';
 import { AppLoading } from './AppLoading';
+import { isLocalDevOrigin } from './devDatabaseTransferProtocol';
+import { useProductionDatabaseImport } from './useProductionDatabaseImport';
 
 export function App() {
   const [ready, setReady] = useState(false);
+  const showDevDatabaseTransfer = import.meta.env.DEV && isLocalDevOrigin(window.location.origin);
+
+  useProductionDatabaseImport();
 
   // Prepare IndexedDB from the frozen catalog before screens read user state.
   useEffect(() => {
@@ -35,6 +41,7 @@ export function App() {
         <Route path="/ranking" element={<RankingPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      {showDevDatabaseTransfer ? <DevDatabaseTransfer /> : null}
     </HashRouter>
   );
 }

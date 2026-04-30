@@ -133,6 +133,7 @@ img {
 .item-card:focus-visible,
 .tie-button:focus-visible,
 .ranking-fab:focus-visible,
+.dev-db-transfer:focus-visible,
 .ranking-row__button:focus-visible,
 .ranking-page__back:focus-visible,
 .fight-modal__close:focus-visible,
@@ -274,6 +275,35 @@ img {
   pointer-events: auto;
   transform: translateY(0);
   transition-delay: 0s;
+}
+
+.dev-db-transfer {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 30;
+  min-height: 40px;
+  border: 1px solid rgba(23, 33, 27, 0.16);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: var(--ink);
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(23, 33, 27, 0.2);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.dev-db-transfer--done {
+  background: var(--green);
+}
+
+.dev-db-transfer--failed {
+  background: var(--coral);
+}
+
+.dev-db-transfer:disabled {
+  cursor: progress;
 }
 
 .celebration-toast {

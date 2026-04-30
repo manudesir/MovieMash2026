@@ -1,7 +1,7 @@
 import type { ComparableItem, RankingItemState } from '../../domain/item';
 import type { ComparisonOutcome, DecidedOutcome } from '../../domain/outcome';
 import { createInitialRankingState, updateRatings } from '../rankingEngine/rating';
-import { db, type ComparisonRecord, type RatingChangeRecord } from './db';
+import { db, type ComparisonRecord, type DatabaseSnapshot, type RatingChangeRecord } from './db';
 
 const MINIMUM_ACTIVE_ITEMS = 10;
 
@@ -127,6 +127,28 @@ export function listRankingStates() {
 
 export function listComparisonRecords() {
   return db.comparisons.toArray();
+}
+
+export async function exportDatabaseSnapshot(): Promise<DatabaseSnapshot> {
+  return db.transaction('r', db.rankingStates, db.comparisons, db.meta, async () => ({
+    version: 1,
+    exportedAt: Date.now(),
+    rankingStates: await db.rankingStates.toArray(),
+    comparisons: await db.comparisons.toArray(),
+    meta: await db.meta.toArray(),
+  }));
+}
+
+export async function importDatabaseSnapshot(snapshot: DatabaseSnapshot) {
+  await db.transaction('rw', db.rankingStates, db.comparisons, db.meta, async () => {
+    await db.rankingStates.clear();
+    await db.comparisons.clear();
+    await db.meta.clear();
+
+    await db.rankingStates.bulkPut(snapshot.rankingStates);
+    await db.comparisons.bulkPut(snapshot.comparisons);
+    await db.meta.bulkPut(snapshot.meta);
+  });
 }
 
 export async function getMetaBoolean(key: string) {

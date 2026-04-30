@@ -7,9 +7,9 @@ Use [PromptV1.md](C:/Users/USER/Desktop/devs/MovieMash2026/PromptV1.md) as the p
 ## Common Commands
 
 - `npm install`: install dependencies.
-- `npm run dev`: start the Vite dev server.
+- `npm run dev`: start the Vite dev server on port 4173.
 - `npm run build`: run TypeScript project checks and build production assets.
-- `npm run preview`: serve the built app locally.
+- `npm run preview`: serve the built app locally on port 4173.
 - `npm run lint`: run ESLint.
 - `npm run test`: run Vitest unit and integration tests once.
 - `npm run test:watch`: run Vitest in watch mode.

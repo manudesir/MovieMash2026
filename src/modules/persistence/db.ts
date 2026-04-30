@@ -26,6 +26,14 @@ export type MetaRecord = {
   value: boolean | number | string;
 };
 
+export type DatabaseSnapshot = {
+  version: 1;
+  exportedAt: number;
+  rankingStates: RankingItemState[];
+  comparisons: ComparisonRecord[];
+  meta: MetaRecord[];
+};
+
 class MovieMashDatabase extends Dexie {
   rankingStates!: Table<RankingItemState, string>;
   comparisons!: Table<ComparisonRecord, string>;
