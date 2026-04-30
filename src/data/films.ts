@@ -1230,5 +1230,233 @@ export const frozenFilms: Film[] = [
     "title": "The Fantastic Four: First Steps",
     "year": 2025,
     "posterPath": "posters/the-fantastic-four-first-steps.jpg"
+  },
+  {
+    "id": "das-boot",
+    "title": "Das Boot",
+    "year": 1981,
+    "posterPath": "posters/das-boot.jpg"
+  },
+  {
+    "id": "the-killing-fields",
+    "title": "The Killing Fields",
+    "year": 1984,
+    "posterPath": "posters/the-killing-fields.jpg"
+  },
+  {
+    "id": "come-and-see",
+    "title": "Come and See",
+    "year": 1985,
+    "posterPath": "posters/come-and-see.jpg"
+  },
+  {
+    "id": "ran",
+    "title": "Ran",
+    "year": 1985,
+    "posterPath": "posters/ran.jpg"
+  },
+  {
+    "id": "platoon",
+    "title": "Platoon",
+    "year": 1986,
+    "posterPath": "posters/platoon.jpg"
+  },
+  {
+    "id": "full-metal-jacket",
+    "title": "Full Metal Jacket",
+    "year": 1987,
+    "posterPath": "posters/full-metal-jacket.jpg"
+  },
+  {
+    "id": "empire-of-the-sun",
+    "title": "Empire of the Sun",
+    "year": 1987,
+    "posterPath": "posters/empire-of-the-sun.jpg"
+  },
+  {
+    "id": "grave-of-the-fireflies",
+    "title": "Grave of the Fireflies",
+    "year": 1988,
+    "posterPath": "posters/grave-of-the-fireflies.jpg"
+  },
+  {
+    "id": "glory",
+    "title": "Glory",
+    "year": 1989,
+    "posterPath": "posters/glory.jpg"
+  },
+  {
+    "id": "born-on-the-fourth-of-july",
+    "title": "Born on the Fourth of July",
+    "year": 1989,
+    "posterPath": "posters/born-on-the-fourth-of-july.jpg"
+  },
+  {
+    "id": "schindler-s-list",
+    "title": "Schindler's List",
+    "year": 1993,
+    "posterPath": "posters/schindler-s-list.jpg"
+  },
+  {
+    "id": "the-english-patient",
+    "title": "The English Patient",
+    "year": 1996,
+    "posterPath": "posters/the-english-patient.jpg"
+  },
+  {
+    "id": "life-is-beautiful",
+    "title": "Life Is Beautiful",
+    "year": 1997,
+    "posterPath": "posters/life-is-beautiful.jpg"
+  },
+  {
+    "id": "three-kings",
+    "title": "Three Kings",
+    "year": 1999,
+    "posterPath": "posters/three-kings.jpg"
+  },
+  {
+    "id": "no-man-s-land",
+    "title": "No Man's Land",
+    "year": 2001,
+    "posterPath": "posters/no-man-s-land.jpg"
+  },
+  {
+    "id": "black-hawk-down",
+    "title": "Black Hawk Down",
+    "year": 2001,
+    "posterPath": "posters/black-hawk-down.jpg"
+  },
+  {
+    "id": "the-pianist",
+    "title": "The Pianist",
+    "year": 2002,
+    "posterPath": "posters/the-pianist.jpg"
+  },
+  {
+    "id": "master-and-commander-the-far-side-of-the-world",
+    "title": "Master and Commander: The Far Side of the World",
+    "year": 2003,
+    "posterPath": "posters/master-and-commander-the-far-side-of-the-world.jpg"
+  },
+  {
+    "id": "downfall",
+    "title": "Downfall",
+    "year": 2004,
+    "posterPath": "posters/downfall.jpg"
+  },
+  {
+    "id": "joyeux-noel",
+    "title": "Joyeux Noel",
+    "year": 2005,
+    "posterPath": "posters/joyeux-noel.jpg"
+  },
+  {
+    "id": "the-wind-that-shakes-the-barley",
+    "title": "The Wind That Shakes the Barley",
+    "year": 2006,
+    "posterPath": "posters/the-wind-that-shakes-the-barley.jpg"
+  },
+  {
+    "id": "letters-from-iwo-jima",
+    "title": "Letters from Iwo Jima",
+    "year": 2006,
+    "posterPath": "posters/letters-from-iwo-jima.jpg"
+  },
+  {
+    "id": "the-counterfeiters",
+    "title": "The Counterfeiters",
+    "year": 2007,
+    "posterPath": "posters/the-counterfeiters.jpg"
+  },
+  {
+    "id": "the-hurt-locker",
+    "title": "The Hurt Locker",
+    "year": 2008,
+    "posterPath": "posters/the-hurt-locker.jpg"
+  },
+  {
+    "id": "waltz-with-bashir",
+    "title": "Waltz with Bashir",
+    "year": 2008,
+    "posterPath": "posters/waltz-with-bashir.jpg"
+  },
+  {
+    "id": "lebanon",
+    "title": "Lebanon",
+    "year": 2009,
+    "posterPath": "posters/lebanon.jpg"
+  },
+  {
+    "id": "restrepo",
+    "title": "Restrepo",
+    "year": 2010,
+    "posterPath": "posters/restrepo.jpg"
+  },
+  {
+    "id": "war-horse",
+    "title": "War Horse",
+    "year": 2011,
+    "posterPath": "posters/war-horse.jpg"
+  },
+  {
+    "id": "beasts-of-no-nation",
+    "title": "Beasts of No Nation",
+    "year": 2015,
+    "posterPath": "posters/beasts-of-no-nation.jpg"
+  },
+  {
+    "id": "son-of-saul",
+    "title": "Son of Saul",
+    "year": 2015,
+    "posterPath": "posters/son-of-saul.jpg"
+  },
+  {
+    "id": "hacksaw-ridge",
+    "title": "Hacksaw Ridge",
+    "year": 2016,
+    "posterPath": "posters/hacksaw-ridge.jpg"
+  },
+  {
+    "id": "dunkirk",
+    "title": "Dunkirk",
+    "year": 2017,
+    "posterPath": "posters/dunkirk.jpg"
+  },
+  {
+    "id": "they-shall-not-grow-old",
+    "title": "They Shall Not Grow Old",
+    "year": 2018,
+    "posterPath": "posters/they-shall-not-grow-old.jpg"
+  },
+  {
+    "id": "1917",
+    "title": "1917",
+    "year": 2019,
+    "posterPath": "posters/1917.jpg"
+  },
+  {
+    "id": "quo-vadis-aida",
+    "title": "Quo Vadis, Aida?",
+    "year": 2020,
+    "posterPath": "posters/quo-vadis-aida.jpg"
+  },
+  {
+    "id": "all-quiet-on-the-western-front",
+    "title": "All Quiet on the Western Front",
+    "year": 2022,
+    "posterPath": "posters/all-quiet-on-the-western-front.jpg"
+  },
+  {
+    "id": "the-zone-of-interest",
+    "title": "The Zone of Interest",
+    "year": 2023,
+    "posterPath": "posters/the-zone-of-interest.jpg"
+  },
+  {
+    "id": "civil-war",
+    "title": "Civil War",
+    "year": 2024,
+    "posterPath": "posters/civil-war.jpg"
   }
 ];
