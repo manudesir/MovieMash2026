@@ -562,6 +562,10 @@ img {
   font-size: 0.98rem;
 }
 
+.fight-modal__row .fight-modal__points--negative {
+  color: var(--coral);
+}
+
 .fight-modal__row small {
   grid-column: 1 / -1;
   color: var(--muted);

@@ -8,19 +8,71 @@ type FightHistoryModalProps = {
   onClose: () => void;
 };
 
+type FightHistoryEntry = {
+  record: ComparisonRecord;
+  text: string;
+  change: NonNullable<ComparisonRecord['ratingChanges']>[number] | undefined;
+};
+
 function pointsLabel(delta: number) {
   return `${delta >= 0 ? '+' : ''}${delta} pts`;
 }
 
+function titleForItem(itemId: string) {
+  return filmItemById.get(itemId)?.label ?? itemId;
+}
+
+function getFightHistoryEntry(record: ComparisonRecord, item: FilmItem): FightHistoryEntry | undefined {
+  const change = record.ratingChanges?.find((ratingChange) => ratingChange.itemId === item.id);
+
+  switch (record.outcomeType) {
+    case 'winner':
+      if (record.winnerId === item.id && record.loserId) {
+        return {
+          record,
+          text: `${item.label} won against ${titleForItem(record.loserId)}`,
+          change,
+        };
+      }
+
+      if (record.loserId === item.id && record.winnerId) {
+        return {
+          record,
+          text: `${item.label} lost to ${titleForItem(record.winnerId)}`,
+          change,
+        };
+      }
+
+      return undefined;
+    case 'tie':
+      if (record.leftId === item.id && record.rightId) {
+        return {
+          record,
+          text: `${item.label} tied with ${titleForItem(record.rightId)}`,
+          change,
+        };
+      }
+
+      if (record.rightId === item.id && record.leftId) {
+        return {
+          record,
+          text: `${item.label} tied with ${titleForItem(record.leftId)}`,
+          change,
+        };
+      }
+
+      return undefined;
+    case 'notSeen':
+      return undefined;
+    default:
+      return record.outcomeType satisfies never;
+  }
+}
+
 export function FightHistoryModal({ item, records, onClose }: FightHistoryModalProps) {
-  const wins = records
-    .filter((record) => record.outcomeType === 'winner' && record.winnerId === item.id)
-    .map((record) => ({
-      record,
-      opponent: record.loserId,
-      change: record.ratingChanges?.find((ratingChange) => ratingChange.itemId === item.id),
-    }))
-    .filter((win) => win.opponent && win.change)
+  const fights = records
+    .map((record) => getFightHistoryEntry(record, item))
+    .filter((entry) => entry !== undefined)
     .sort((first, second) => second.record.createdAt - first.record.createdAt);
 
   return (
@@ -34,7 +86,7 @@ export function FightHistoryModal({ item, records, onClose }: FightHistoryModalP
       >
         <header className="fight-modal__header">
           <div>
-            <p className="eyebrow">Won fights</p>
+            <p className="eyebrow">Fight history</p>
             <h2 id="fight-modal-title">{item.label}</h2>
           </div>
           <button type="button" className="fight-modal__close" onClick={onClose} aria-label="Close fight history">
@@ -42,23 +94,20 @@ export function FightHistoryModal({ item, records, onClose }: FightHistoryModalP
           </button>
         </header>
 
-        {wins.length === 0 ? (
-          <p className="fight-modal__empty">No logged wins with point changes yet.</p>
+        {fights.length === 0 ? (
+          <p className="fight-modal__empty">No logged fights with point changes yet.</p>
         ) : (
           <ol className="fight-modal__list">
-            {wins.map((win) => {
-              const opponentTitle = win.opponent ? (filmItemById.get(win.opponent)?.label ?? win.opponent) : 'unknown item';
-              const change = win.change;
-
+            {fights.map((fight) => {
               return (
-                <li key={win.record.id} className="fight-modal__row">
-                  <span>
-                    {item.label} won against {opponentTitle}
-                  </span>
-                  <strong>{change ? pointsLabel(change.delta) : '0 pts'}</strong>
-                  {change ? (
+                <li key={fight.record.id} className="fight-modal__row">
+                  <span>{fight.text}</span>
+                  <strong className={fight.change && fight.change.delta < 0 ? 'fight-modal__points--negative' : ''}>
+                    {fight.change ? pointsLabel(fight.change.delta) : 'No point log'}
+                  </strong>
+                  {fight.change ? (
                     <small>
-                      {change.beforeRating} to {change.afterRating}
+                      {fight.change.beforeRating} to {fight.change.afterRating}
                     </small>
                   ) : null}
                 </li>

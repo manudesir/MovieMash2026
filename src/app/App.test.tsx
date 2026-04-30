@@ -33,22 +33,30 @@ describe('main app flow', () => {
     expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
   });
 
-  it('opens a won fight history from a ranking tile', async () => {
+  it('opens fight history from both sides of a result', async () => {
     const user = userEvent.setup();
     render(<App />);
 
     const choices = await screen.findAllByRole('button', { name: /^Choose / });
-    const chosenTitle = choices[0].getAttribute('aria-label')?.replace('Choose ', '') ?? '';
+    const winnerTitle = choices[0].getAttribute('aria-label')?.replace('Choose ', '') ?? '';
+    const loserTitle = choices[1].getAttribute('aria-label')?.replace('Choose ', '') ?? '';
     await user.click(choices[0]);
 
     await waitFor(() => {
       expect(screen.getByText('1 picks')).toBeInTheDocument();
     });
     await user.click(screen.getByLabelText('Open ranking'));
-    await user.click(await screen.findByRole('button', { name: `Open win history for ${chosenTitle}` }));
+    await user.click(await screen.findByRole('button', { name: `Open fight history for ${winnerTitle}` }));
 
-    expect(await screen.findByRole('dialog', { name: chosenTitle })).toBeInTheDocument();
-    expect(screen.getByText((text) => text.startsWith(`${chosenTitle} won against`))).toBeInTheDocument();
+    expect(await screen.findByRole('dialog', { name: winnerTitle })).toBeInTheDocument();
+    expect(screen.getByText(`${winnerTitle} won against ${loserTitle}`)).toBeInTheDocument();
     expect(screen.getByText(/\+22 pts/)).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Close fight history' }));
+
+    await user.click(screen.getByRole('button', { name: `Open fight history for ${loserTitle}` }));
+
+    expect(await screen.findByRole('dialog', { name: loserTitle })).toBeInTheDocument();
+    expect(screen.getByText(`${loserTitle} lost to ${winnerTitle}`)).toBeInTheDocument();
+    expect(screen.getByText(/-22 pts/)).toBeInTheDocument();
   });
 });

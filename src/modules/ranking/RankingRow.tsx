@@ -16,7 +16,7 @@ export function RankingRow({ item, state, rank, tier, onOpenHistory }: RankingRo
         type="button"
         className="ranking-row__button"
         onClick={onOpenHistory}
-        aria-label={`Open win history for ${item.label}`}
+        aria-label={`Open fight history for ${item.label}`}
       >
         <span className="ranking-row__rank">{rank}</span>
         <img className="ranking-row__poster" src={item.imageSrc} alt="" />
