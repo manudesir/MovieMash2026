@@ -33,6 +33,21 @@ describe('main app flow', () => {
     expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
   });
 
+  it('returns to the same fight after visiting ranking', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const firstChoices = await screen.findAllByRole('button', { name: /^Choose / });
+    const firstLabels = firstChoices.map((choice) => choice.getAttribute('aria-label'));
+    await user.click(screen.getByLabelText('Open ranking'));
+
+    expect(await screen.findByRole('heading', { name: 'Your ranking' })).toBeInTheDocument();
+    await user.click(screen.getByLabelText('Back to comparisons'));
+
+    const returnedChoices = await screen.findAllByRole('button', { name: /^Choose / });
+    expect(returnedChoices.map((choice) => choice.getAttribute('aria-label'))).toEqual(firstLabels);
+  });
+
   it('opens fight history from both sides of a result', async () => {
     const user = userEvent.setup();
     render(<App />);

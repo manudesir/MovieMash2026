@@ -182,3 +182,5 @@ export function useComparisonFlow() {
     setIsInteracting,
   };
 }
+
+export type ComparisonFlow = ReturnType<typeof useComparisonFlow>;

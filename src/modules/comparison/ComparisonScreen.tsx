@@ -3,11 +3,14 @@ import { CelebrationToast } from './CelebrationToast';
 import { FloatingRankingButton } from './FloatingRankingButton';
 import { ItemCard } from './ItemCard';
 import { TieButton } from './TieButton';
-import { useComparisonFlow } from './useComparisonFlow';
+import type { ComparisonFlow } from './useComparisonFlow';
 import { useIdleVisibility } from './useIdleVisibility';
 
-export function ComparisonScreen() {
-  const flow = useComparisonFlow();
+type ComparisonScreenProps = {
+  flow: ComparisonFlow;
+};
+
+export function ComparisonScreen({ flow }: ComparisonScreenProps) {
   const rankingButtonVisible = useIdleVisibility(flow.isInteracting, flow.feedback?.id);
 
   if (!flow.leftItem || !flow.rightItem) {
