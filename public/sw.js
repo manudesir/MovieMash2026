@@ -1,4 +1,4 @@
-const CACHE_NAME = 'movie-mash-v1';
+const CACHE_NAME = 'movie-mash-v2';
 const APP_SHELL = ['./', './index.html', './favicon.svg', './icons.svg', './manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
