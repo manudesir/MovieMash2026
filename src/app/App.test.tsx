@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { resetDatabase } from '../modules/persistence/db';
@@ -58,5 +58,25 @@ describe('main app flow', () => {
     expect(await screen.findByRole('dialog', { name: loserTitle })).toBeInTheDocument();
     expect(screen.getByText(`${loserTitle} lost to ${winnerTitle}`)).toBeInTheDocument();
     expect(screen.getByText(/-22 pts/)).toBeInTheDocument();
+  });
+
+  it('removes a movie from ranking after a swipe', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await screen.findAllByRole('button', { name: /^Choose / });
+    await user.click(screen.getByLabelText('Open ranking'));
+
+    const beforeCount = screen.getAllByRole('listitem').length;
+    const rowButton = (await screen.findAllByRole('button', { name: /Open fight history for / }))[0];
+
+    fireEvent.pointerDown(rowButton, { pointerId: 1, clientX: 10 });
+    fireEvent.pointerMove(rowButton, { pointerId: 1, clientX: 140 });
+    fireEvent.pointerUp(rowButton, { pointerId: 1, clientX: 140 });
+
+    await waitFor(() => {
+      expect(screen.getAllByRole('listitem').length).toBe(beforeCount - 1);
+    });
+    expect(screen.getByText(/removed$/)).toBeInTheDocument();
   });
 });

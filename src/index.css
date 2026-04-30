@@ -397,6 +397,18 @@ img {
   line-height: 1;
 }
 
+.ranking-page__hint,
+.ranking-page__message {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.ranking-page__message {
+  color: var(--coral);
+  font-weight: 800;
+}
+
 .ranking-list {
   list-style: none;
   margin: 0;
@@ -406,7 +418,34 @@ img {
 }
 
 .ranking-row {
+  position: relative;
   display: block;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.ranking-row__swipe-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-inline: 18px;
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, rgba(232, 93, 71, 0.1), rgba(232, 93, 71, 0.82)),
+    rgba(232, 93, 71, 0.16);
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ranking-row__swipe-hint--ready {
+  background:
+    linear-gradient(90deg, rgba(232, 93, 71, 0.18), rgba(232, 93, 71, 1)),
+    rgba(232, 93, 71, 0.2);
 }
 
 .ranking-row__button {
@@ -423,11 +462,28 @@ img {
   color: inherit;
   cursor: pointer;
   text-align: left;
+  touch-action: pan-y;
+  user-select: none;
+  transition:
+    transform var(--spring),
+    box-shadow var(--fast),
+    border-color var(--fast),
+    opacity var(--fast);
 }
 
 .ranking-row__button:hover {
   border-color: rgba(31, 122, 76, 0.35);
   box-shadow: 0 10px 30px rgba(23, 33, 27, 0.1);
+}
+
+.ranking-row__button--dragging {
+  box-shadow: 0 18px 42px rgba(23, 33, 27, 0.14);
+  transition: none;
+}
+
+.ranking-row__button--dismiss-ready {
+  border-color: rgba(232, 93, 71, 0.42);
+  opacity: 0.84;
 }
 
 .ranking-row__rank {

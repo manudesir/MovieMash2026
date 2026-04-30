@@ -1,3 +1,4 @@
+import { type PointerEvent, useRef, useState } from 'react';
 import type { RankingItemState, StabilityTier } from '../../domain/item';
 import type { FilmItem } from '../content/types';
 
@@ -6,16 +7,90 @@ type RankingRowProps = {
   state: RankingItemState;
   rank: number;
   tier: StabilityTier;
+  canMarkNotSeen: boolean;
   onOpenHistory: () => void;
+  onMarkNotSeen: () => Promise<boolean>;
 };
 
-export function RankingRow({ item, state, rank, tier, onOpenHistory }: RankingRowProps) {
+const SWIPE_THRESHOLD_PX = 96;
+
+export function RankingRow({ item, state, rank, tier, canMarkNotSeen, onOpenHistory, onMarkNotSeen }: RankingRowProps) {
+  const pointerIdRef = useRef<number | undefined>(undefined);
+  const startXRef = useRef(0);
+  const [dragX, setDragX] = useState(0);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [isPointerDown, setIsPointerDown] = useState(false);
+  const isDismissReady = Math.abs(dragX) >= SWIPE_THRESHOLD_PX;
+  const rowStyle = dragX === 0 ? undefined : { transform: `translateX(${dragX}px)` };
+
+  function resetDrag() {
+    pointerIdRef.current = undefined;
+    setIsPointerDown(false);
+    setDragX(0);
+  }
+
+  function handlePointerDown(event: PointerEvent<HTMLButtonElement>) {
+    pointerIdRef.current = event.pointerId;
+    startXRef.current = event.clientX;
+    setIsPointerDown(true);
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLButtonElement>) {
+    if (pointerIdRef.current !== event.pointerId || isRemoving) {
+      return;
+    }
+
+    const nextDragX = event.clientX - startXRef.current;
+    setDragX(nextDragX);
+  }
+
+  async function handlePointerEnd(event: PointerEvent<HTMLButtonElement>) {
+    if (pointerIdRef.current !== event.pointerId) {
+      return;
+    }
+
+    if (!isDismissReady) {
+      resetDrag();
+      return;
+    }
+
+    setIsRemoving(true);
+    const removed = await onMarkNotSeen();
+    setIsRemoving(false);
+    resetDrag();
+
+    if (!removed) {
+      return;
+    }
+  }
+
+  function handleClick() {
+    if (Math.abs(dragX) > 12 || isRemoving) {
+      return;
+    }
+
+    onOpenHistory();
+  }
+
   return (
     <li className="ranking-row">
+      <div className={`ranking-row__swipe-hint ${isDismissReady ? 'ranking-row__swipe-hint--ready' : ''}`} aria-hidden="true">
+        <span>{canMarkNotSeen ? 'Unseen' : 'Last 10 stay'}</span>
+      </div>
       <button
         type="button"
-        className="ranking-row__button"
-        onClick={onOpenHistory}
+        className={[
+          'ranking-row__button',
+          isPointerDown ? 'ranking-row__button--dragging' : '',
+          isDismissReady ? 'ranking-row__button--dismiss-ready' : '',
+        ].join(' ')}
+        style={rowStyle}
+        onClick={handleClick}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerEnd}
+        onPointerCancel={handlePointerEnd}
+        onPointerLeave={handlePointerEnd}
         aria-label={`Open fight history for ${item.label}`}
       >
         <span className="ranking-row__rank">{rank}</span>

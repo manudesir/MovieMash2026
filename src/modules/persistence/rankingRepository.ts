@@ -213,4 +213,38 @@ export async function persistOutcome(outcome: ComparisonOutcome): Promise<Persis
   });
 }
 
+export async function markRankingItemNotSeen(itemId: string): Promise<PersistOutcomeResult> {
+  return db.transaction('rw', db.rankingStates, db.comparisons, async () => {
+    const now = Date.now();
+    const states = await db.rankingStates.toArray();
+    const itemState = states.find((state) => state.itemId === itemId);
+
+    if (!itemState) {
+      return { applied: false, reason: 'missingState', states };
+    }
+
+    const activeCount = states.filter((state) => state.active).length;
+
+    if (activeCount <= MINIMUM_ACTIVE_ITEMS) {
+      return { applied: false, reason: 'minimumActiveItems', states };
+    }
+
+    await db.rankingStates.put({
+      ...itemState,
+      active: false,
+      notSeen: true,
+      updatedAt: now,
+    });
+    await db.comparisons.put({
+      id: globalThis.crypto?.randomUUID?.() ?? `${now}-${Math.random().toString(16).slice(2)}`,
+      outcomeType: 'notSeen',
+      notSeenId: itemId,
+      leftId: itemId,
+      createdAt: now,
+    });
+
+    return { applied: true, states: await db.rankingStates.toArray() };
+  });
+}
+
 export { MINIMUM_ACTIVE_ITEMS };
