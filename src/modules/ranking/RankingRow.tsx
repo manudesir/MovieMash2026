@@ -16,6 +16,7 @@ const SWIPE_THRESHOLD_PX = 96;
 
 export function RankingRow({ item, state, rank, tier, canMarkNotSeen, onOpenHistory, onMarkNotSeen }: RankingRowProps) {
   const pointerIdRef = useRef<number | undefined>(undefined);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const startXRef = useRef(0);
   const [dragX, setDragX] = useState(0);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -24,12 +25,25 @@ export function RankingRow({ item, state, rank, tier, canMarkNotSeen, onOpenHist
   const rowStyle = dragX === 0 ? undefined : { transform: `translateX(${dragX}px)` };
 
   function resetDrag() {
+    if (
+      buttonRef.current &&
+      pointerIdRef.current !== undefined &&
+      typeof buttonRef.current.hasPointerCapture === 'function' &&
+      buttonRef.current.hasPointerCapture(pointerIdRef.current)
+    ) {
+      buttonRef.current.releasePointerCapture(pointerIdRef.current);
+    }
+
     pointerIdRef.current = undefined;
     setIsPointerDown(false);
     setDragX(0);
   }
 
   function handlePointerDown(event: PointerEvent<HTMLButtonElement>) {
+    if (typeof event.currentTarget.setPointerCapture === 'function') {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
     pointerIdRef.current = event.pointerId;
     startXRef.current = event.clientX;
     setIsPointerDown(true);
@@ -78,6 +92,7 @@ export function RankingRow({ item, state, rank, tier, canMarkNotSeen, onOpenHist
         <span>{canMarkNotSeen ? 'Unseen' : 'Last 10 stay'}</span>
       </div>
       <button
+        ref={buttonRef}
         type="button"
         className={[
           'ranking-row__button',
@@ -90,7 +105,6 @@ export function RankingRow({ item, state, rank, tier, canMarkNotSeen, onOpenHist
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerEnd}
         onPointerCancel={handlePointerEnd}
-        onPointerLeave={handlePointerEnd}
         aria-label={`Open fight history for ${item.label}`}
       >
         <span className="ranking-row__rank">{rank}</span>
