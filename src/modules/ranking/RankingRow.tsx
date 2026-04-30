@@ -22,6 +22,7 @@ export function RankingRow({ item, state, rank, tier, canMarkNotSeen, onOpenHist
   const [isRemoving, setIsRemoving] = useState(false);
   const [isPointerDown, setIsPointerDown] = useState(false);
   const isDismissReady = Math.abs(dragX) >= SWIPE_THRESHOLD_PX;
+  const isSwipeHintVisible = Math.abs(dragX) > 8;
   const rowStyle = dragX === 0 ? undefined : { transform: `translateX(${dragX}px)` };
 
   function resetDrag() {
@@ -88,7 +89,14 @@ export function RankingRow({ item, state, rank, tier, canMarkNotSeen, onOpenHist
 
   return (
     <li className="ranking-row">
-      <div className={`ranking-row__swipe-hint ${isDismissReady ? 'ranking-row__swipe-hint--ready' : ''}`} aria-hidden="true">
+      <div
+        className={[
+          'ranking-row__swipe-hint',
+          isSwipeHintVisible ? 'ranking-row__swipe-hint--visible' : '',
+          isDismissReady ? 'ranking-row__swipe-hint--ready' : '',
+        ].join(' ')}
+        aria-hidden="true"
+      >
         <span>{canMarkNotSeen ? 'Unseen' : 'Last 10 stay'}</span>
       </div>
       <button

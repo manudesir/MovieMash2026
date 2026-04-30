@@ -439,7 +439,14 @@ img {
   font-size: 0.76rem;
   font-weight: 900;
   letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
   text-transform: uppercase;
+  transition: opacity var(--fast);
+}
+
+.ranking-row__swipe-hint--visible {
+  opacity: 1;
 }
 
 .ranking-row__swipe-hint--ready {
@@ -458,7 +465,7 @@ img {
   padding: 8px 10px;
   border: 1px solid rgba(23, 33, 27, 0.13);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.78);
+  background: #fff;
   color: inherit;
   cursor: pointer;
   text-align: left;
