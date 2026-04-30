@@ -6,20 +6,28 @@ type RankingRowProps = {
   state: RankingItemState;
   rank: number;
   tier: StabilityTier;
+  onOpenHistory: () => void;
 };
 
-export function RankingRow({ item, state, rank, tier }: RankingRowProps) {
+export function RankingRow({ item, state, rank, tier, onOpenHistory }: RankingRowProps) {
   return (
     <li className="ranking-row">
-      <span className="ranking-row__rank">{rank}</span>
-      <img className="ranking-row__poster" src={item.imageSrc} alt="" />
-      <span className="ranking-row__main">
-        <span className="ranking-row__title">{item.label}</span>
-        <span className="ranking-row__meta">
-          {item.year} - {state.rating} pts
+      <button
+        type="button"
+        className="ranking-row__button"
+        onClick={onOpenHistory}
+        aria-label={`Open win history for ${item.label}`}
+      >
+        <span className="ranking-row__rank">{rank}</span>
+        <img className="ranking-row__poster" src={item.imageSrc} alt="" />
+        <span className="ranking-row__main">
+          <span className="ranking-row__title">{item.label}</span>
+          <span className="ranking-row__meta">
+            {item.year} - {state.rating} pts
+          </span>
         </span>
-      </span>
-      <span className={`ranking-row__tier ranking-row__tier--${tier}`}>{tier}</span>
+        <span className={`ranking-row__tier ranking-row__tier--${tier}`}>{tier}</span>
+      </button>
     </li>
   );
 }

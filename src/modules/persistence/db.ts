@@ -10,7 +10,15 @@ export type ComparisonRecord = {
   winnerId?: string;
   loserId?: string;
   notSeenId?: string;
+  ratingChanges?: RatingChangeRecord[];
   createdAt: number;
+};
+
+export type RatingChangeRecord = {
+  itemId: string;
+  beforeRating: number;
+  afterRating: number;
+  delta: number;
 };
 
 export type MetaRecord = {

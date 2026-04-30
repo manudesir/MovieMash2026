@@ -1,7 +1,7 @@
 import type { ComparableItem, RankingItemState } from '../../domain/item';
 import type { ComparisonOutcome, DecidedOutcome } from '../../domain/outcome';
 import { createInitialRankingState, updateRatings } from '../rankingEngine/rating';
-import { db, type ComparisonRecord } from './db';
+import { db, type ComparisonRecord, type RatingChangeRecord } from './db';
 
 const MINIMUM_ACTIVE_ITEMS = 10;
 
@@ -16,7 +16,11 @@ export type PersistOutcomeResult =
       states: RankingItemState[];
     };
 
-function createRecord(outcome: ComparisonOutcome, now: number): ComparisonRecord {
+function createRecord(
+  outcome: ComparisonOutcome,
+  now: number,
+  ratingChanges?: RatingChangeRecord[],
+): ComparisonRecord {
   const id = globalThis.crypto?.randomUUID?.() ?? `${now}-${Math.random().toString(16).slice(2)}`;
 
   switch (outcome.type) {
@@ -26,6 +30,7 @@ function createRecord(outcome: ComparisonOutcome, now: number): ComparisonRecord
         outcomeType: outcome.type,
         winnerId: outcome.winnerId,
         loserId: outcome.loserId,
+        ratingChanges,
         createdAt: now,
       };
     case 'tie':
@@ -34,6 +39,7 @@ function createRecord(outcome: ComparisonOutcome, now: number): ComparisonRecord
         outcomeType: outcome.type,
         leftId: outcome.leftId,
         rightId: outcome.rightId,
+        ratingChanges,
         createdAt: now,
       };
     case 'notSeen':
@@ -78,6 +84,28 @@ function applyDecidedOutcome(
   }
 
   return updateRatings(leftState, rightState, outcome, now);
+}
+
+function ratingChangesForUpdate(
+  leftBefore: RankingItemState,
+  rightBefore: RankingItemState,
+  leftAfter: RankingItemState,
+  rightAfter: RankingItemState,
+): RatingChangeRecord[] {
+  return [
+    {
+      itemId: leftBefore.itemId,
+      beforeRating: leftBefore.rating,
+      afterRating: leftAfter.rating,
+      delta: leftAfter.rating - leftBefore.rating,
+    },
+    {
+      itemId: rightBefore.itemId,
+      beforeRating: rightBefore.rating,
+      afterRating: rightAfter.rating,
+      delta: rightAfter.rating - rightBefore.rating,
+    },
+  ];
 }
 
 export async function initializeRankingStates(items: ComparableItem[]) {
@@ -144,14 +172,21 @@ export async function persistOutcome(outcome: ComparisonOutcome): Promise<Persis
       return { applied: true, states: await db.rankingStates.toArray() };
     }
 
+    const beforeStates = idsForOutcome(outcome).map((itemId) => statesById.get(itemId));
     const updated = applyDecidedOutcome(statesById, outcome, now);
 
-    if (!updated) {
+    if (!updated || !beforeStates[0] || !beforeStates[1]) {
       return { applied: false, reason: 'missingState', states };
     }
 
     await db.rankingStates.bulkPut([updated.left, updated.right]);
-    await db.comparisons.put(createRecord(outcome, now));
+    await db.comparisons.put(
+      createRecord(
+        outcome,
+        now,
+        ratingChangesForUpdate(beforeStates[0], beforeStates[1], updated.left, updated.right),
+      ),
+    );
     return { applied: true, states: await db.rankingStates.toArray() };
   });
 }

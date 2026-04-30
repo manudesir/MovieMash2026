@@ -1,14 +1,19 @@
 import { ArrowLeft } from 'lucide-react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { filmItemById } from '../content/filmSource';
-import { listRankingStates } from '../persistence/rankingRepository';
+import { listComparisonRecords, listRankingStates } from '../persistence/rankingRepository';
 import { getOrderedRanking, getStabilityTier } from '../rankingEngine/stability';
+import { FightHistoryModal } from './FightHistoryModal';
 import { RankingRow } from './RankingRow';
 
 export function RankingPage() {
   const states = useLiveQuery(listRankingStates, [], []);
+  const records = useLiveQuery(listComparisonRecords, [], []);
+  const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
   const rankedStates = getOrderedRanking(states);
+  const selectedItem = selectedItemId ? filmItemById.get(selectedItemId) : undefined;
 
   return (
     <main className="ranking-page">
@@ -37,10 +42,14 @@ export function RankingPage() {
               state={state}
               rank={index + 1}
               tier={getStabilityTier(state)}
+              onOpenHistory={() => setSelectedItemId(item.id)}
             />
           );
         })}
       </ol>
+      {selectedItem ? (
+        <FightHistoryModal item={selectedItem} records={records} onClose={() => setSelectedItemId(undefined)} />
+      ) : null}
     </main>
   );
 }
