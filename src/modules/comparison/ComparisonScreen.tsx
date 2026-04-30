@@ -32,6 +32,7 @@ export function ComparisonScreen({ flow }: ComparisonScreenProps) {
       <section className="comparison-stage" aria-label="Choose one item">
         <ItemCard
           item={flow.leftItem}
+          previewItem={flow.nextLeftItem}
           side="left"
           onChoose={flow.chooseLeft}
           onNotSeen={flow.markNotSeen}
@@ -40,6 +41,7 @@ export function ComparisonScreen({ flow }: ComparisonScreenProps) {
         <TieButton onTie={flow.tie} />
         <ItemCard
           item={flow.rightItem}
+          previewItem={flow.nextRightItem}
           side="right"
           onChoose={flow.chooseRight}
           onNotSeen={flow.markNotSeen}

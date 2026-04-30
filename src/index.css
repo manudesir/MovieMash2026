@@ -109,9 +109,19 @@ img {
   position: relative;
 }
 
-.item-card {
+.item-card-stack {
   min-width: 0;
   height: min(74svh, 680px);
+  position: relative;
+  isolation: isolate;
+}
+
+.item-card,
+.preview-item-card {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   border: 1px solid rgba(23, 33, 27, 0.16);
   border-radius: 8px;
   padding: 8px;
@@ -128,6 +138,29 @@ img {
     box-shadow var(--fast),
     border-color var(--fast),
     opacity var(--fast);
+}
+
+.item-card {
+  z-index: 2;
+}
+
+.preview-item-card {
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.72;
+  transform: translate3d(0, 18px, 0) scale(0.96);
+  transform-origin: center bottom;
+  filter: saturate(0.88);
+  transition:
+    opacity var(--fast),
+    transform var(--spring),
+    filter var(--fast);
+}
+
+.item-card-stack--revealing .preview-item-card {
+  opacity: 0.96;
+  transform: translate3d(0, 8px, 0) scale(0.98);
+  filter: saturate(1);
 }
 
 .item-card:focus-visible,

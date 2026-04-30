@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ItemId, RankingItemState } from '../../domain/item';
 import type { ComparisonOutcome } from '../../domain/outcome';
 import { filmItemById } from '../content/filmSource';
@@ -24,6 +24,7 @@ export type FlowFeedback = {
 };
 
 const CELEBRATION_META_KEY = 'celebrationShown';
+const MATCHUP_QUEUE_SIZE = 4;
 
 function otherItemId(matchup: Matchup, itemId: ItemId) {
   return matchup.leftId === itemId ? matchup.rightId : matchup.leftId;
@@ -31,6 +32,14 @@ function otherItemId(matchup: Matchup, itemId: ItemId) {
 
 function getItem(itemId: ItemId) {
   return filmItemById.get(itemId);
+}
+
+function matchupKey(matchup: Matchup) {
+  return [matchup.leftId, matchup.rightId].sort().join('::');
+}
+
+function matchupIsActive(matchup: Matchup, activeIds: Set<string>) {
+  return activeIds.has(matchup.leftId) && activeIds.has(matchup.rightId);
 }
 
 function titleForLog(itemId: ItemId) {
@@ -54,21 +63,35 @@ export function useComparisonFlow() {
   const states = useLiveQuery(listRankingStates, [], []);
   const comparisons = useLiveQuery(listComparisonRecords, [], []);
   const [queue, setQueue] = useState<Matchup[]>([]);
+  const queueRef = useRef<Matchup[]>([]);
   const [feedback, setFeedback] = useState<FlowFeedback | undefined>();
   const [celebrationVisible, setCelebrationVisible] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
 
   const activeStates = states.filter((state) => state.active);
   const currentMatchup = queue[0];
+  const nextMatchup = queue[1];
   const leftItem = currentMatchup ? getItem(currentMatchup.leftId) : undefined;
   const rightItem = currentMatchup ? getItem(currentMatchup.rightId) : undefined;
+  const nextLeftItem = nextMatchup ? getItem(nextMatchup.leftId) : undefined;
+  const nextRightItem = nextMatchup ? getItem(nextMatchup.rightId) : undefined;
   const canMarkNotSeen = activeStates.length > MINIMUM_ACTIVE_ITEMS;
 
   // Keep the speculative queue fresh when IndexedDB changes after each action.
   useEffect(() => {
     const nextActiveStates = states.filter((state) => state.active);
-    const nextQueue = nextActiveStates.length < 2 ? [] : buildMatchupQueue(nextActiveStates);
+    const activeIds = new Set(nextActiveStates.map((state) => state.itemId));
+    const previewedNextMatchup = queueRef.current[0];
+    const freshQueue = nextActiveStates.length < 2 ? [] : buildMatchupQueue(nextActiveStates, MATCHUP_QUEUE_SIZE);
+    const nextQueue =
+      previewedNextMatchup && matchupIsActive(previewedNextMatchup, activeIds)
+        ? [
+            previewedNextMatchup,
+            ...freshQueue.filter((matchup) => matchupKey(matchup) !== matchupKey(previewedNextMatchup)),
+          ].slice(0, MATCHUP_QUEUE_SIZE)
+        : freshQueue;
     const timeoutId = window.setTimeout(() => {
+      queueRef.current = nextQueue;
       setQueue(nextQueue);
     }, 0);
 
@@ -95,7 +118,9 @@ export function useComparisonFlow() {
   }
 
   async function commitOutcome(outcome: ComparisonOutcome, kind: FeedbackKind, label: string) {
-    setQueue((currentQueue) => currentQueue.slice(1));
+    const nextQueue = queueRef.current.slice(1);
+    queueRef.current = nextQueue;
+    setQueue(nextQueue);
     showFeedback(kind, label);
     const result = await persistOutcome(outcome);
     console.log(
@@ -168,6 +193,8 @@ export function useComparisonFlow() {
   return {
     leftItem: leftItem as FilmItem | undefined,
     rightItem: rightItem as FilmItem | undefined,
+    nextLeftItem: nextLeftItem as FilmItem | undefined,
+    nextRightItem: nextRightItem as FilmItem | undefined,
     totalCount: states.length,
     activeCount: activeStates.length,
     comparisonCount: comparisons.length,

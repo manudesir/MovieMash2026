@@ -1,9 +1,11 @@
 import type { ItemId } from '../../domain/item';
 import type { FilmItem } from '../content/types';
+import { PreviewItemCard } from './PreviewItemCard';
 import { useDismissDrag } from './useDismissDrag';
 
 type ItemCardProps = {
   item: FilmItem;
+  previewItem?: FilmItem;
   side: 'left' | 'right';
   onChoose: () => void;
   onNotSeen: (itemId: ItemId) => void;
@@ -12,6 +14,7 @@ type ItemCardProps = {
 
 export function ItemCard({
   item,
+  previewItem,
   side,
   onChoose,
   onNotSeen,
@@ -27,6 +30,9 @@ export function ItemCard({
   ]
     .filter(Boolean)
     .join(' ');
+  const stackClass = ['item-card-stack', drag.isDragging ? 'item-card-stack--revealing' : '']
+    .filter(Boolean)
+    .join(' ');
 
   function handleClick() {
     if (drag.shouldIgnoreClick()) {
@@ -37,21 +43,24 @@ export function ItemCard({
   }
 
   return (
-    <button
-      type="button"
-      className={cardClass}
-      style={drag.style}
-      onClick={handleClick}
-      aria-label={`Choose ${item.label}`}
-      {...drag.pointerHandlers}
-    >
-      <span className="item-card__poster-wrap">
-        <img className="item-card__poster" src={item.imageSrc} alt="" draggable="false" />
-      </span>
-      <span className="item-card__text">
-        <span className="item-card__title">{item.label}</span>
-        <span className="item-card__year">{item.year}</span>
-      </span>
-    </button>
+    <div className={stackClass}>
+      {previewItem ? <PreviewItemCard item={previewItem} /> : null}
+      <button
+        type="button"
+        className={cardClass}
+        style={drag.style}
+        onClick={handleClick}
+        aria-label={`Choose ${item.label}`}
+        {...drag.pointerHandlers}
+      >
+        <span className="item-card__poster-wrap">
+          <img className="item-card__poster" src={item.imageSrc} alt="" draggable="false" />
+        </span>
+        <span className="item-card__text">
+          <span className="item-card__title">{item.label}</span>
+          <span className="item-card__year">{item.year}</span>
+        </span>
+      </button>
+    </div>
   );
 }
