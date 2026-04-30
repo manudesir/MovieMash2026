@@ -1008,5 +1008,227 @@ export const frozenFilms: Film[] = [
     "title": "The Lord of the Rings: The War of the Rohirrim",
     "year": 2024,
     "posterPath": "posters/the-lord-of-the-rings-the-war-of-the-rohirrim.jpg"
+  },
+  {
+    "id": "iron-man",
+    "title": "Iron Man",
+    "year": 2008,
+    "posterPath": "posters/iron-man.jpg"
+  },
+  {
+    "id": "the-incredible-hulk",
+    "title": "The Incredible Hulk",
+    "year": 2008,
+    "posterPath": "posters/the-incredible-hulk.jpg"
+  },
+  {
+    "id": "iron-man-2",
+    "title": "Iron Man 2",
+    "year": 2010,
+    "posterPath": "posters/iron-man-2.jpg"
+  },
+  {
+    "id": "thor",
+    "title": "Thor",
+    "year": 2011,
+    "posterPath": "posters/thor.jpg"
+  },
+  {
+    "id": "captain-america-the-first-avenger",
+    "title": "Captain America: The First Avenger",
+    "year": 2011,
+    "posterPath": "posters/captain-america-the-first-avenger.jpg"
+  },
+  {
+    "id": "the-avengers",
+    "title": "The Avengers",
+    "year": 2012,
+    "posterPath": "posters/the-avengers.jpg"
+  },
+  {
+    "id": "iron-man-3",
+    "title": "Iron Man 3",
+    "year": 2013,
+    "posterPath": "posters/iron-man-3.jpg"
+  },
+  {
+    "id": "thor-the-dark-world",
+    "title": "Thor: The Dark World",
+    "year": 2013,
+    "posterPath": "posters/thor-the-dark-world.jpg"
+  },
+  {
+    "id": "captain-america-the-winter-soldier",
+    "title": "Captain America: The Winter Soldier",
+    "year": 2014,
+    "posterPath": "posters/captain-america-the-winter-soldier.jpg"
+  },
+  {
+    "id": "guardians-of-the-galaxy",
+    "title": "Guardians of the Galaxy",
+    "year": 2014,
+    "posterPath": "posters/guardians-of-the-galaxy.jpg"
+  },
+  {
+    "id": "avengers-age-of-ultron",
+    "title": "Avengers: Age of Ultron",
+    "year": 2015,
+    "posterPath": "posters/avengers-age-of-ultron.jpg"
+  },
+  {
+    "id": "ant-man",
+    "title": "Ant-Man",
+    "year": 2015,
+    "posterPath": "posters/ant-man.jpg"
+  },
+  {
+    "id": "captain-america-civil-war",
+    "title": "Captain America: Civil War",
+    "year": 2016,
+    "posterPath": "posters/captain-america-civil-war.jpg"
+  },
+  {
+    "id": "doctor-strange",
+    "title": "Doctor Strange",
+    "year": 2016,
+    "posterPath": "posters/doctor-strange.jpg"
+  },
+  {
+    "id": "guardians-of-the-galaxy-vol-2",
+    "title": "Guardians of the Galaxy Vol. 2",
+    "year": 2017,
+    "posterPath": "posters/guardians-of-the-galaxy-vol-2.jpg"
+  },
+  {
+    "id": "spider-man-homecoming",
+    "title": "Spider-Man: Homecoming",
+    "year": 2017,
+    "posterPath": "posters/spider-man-homecoming.jpg"
+  },
+  {
+    "id": "thor-ragnarok",
+    "title": "Thor: Ragnarok",
+    "year": 2017,
+    "posterPath": "posters/thor-ragnarok.jpg"
+  },
+  {
+    "id": "black-panther",
+    "title": "Black Panther",
+    "year": 2018,
+    "posterPath": "posters/black-panther.jpg"
+  },
+  {
+    "id": "avengers-infinity-war",
+    "title": "Avengers: Infinity War",
+    "year": 2018,
+    "posterPath": "posters/avengers-infinity-war.jpg"
+  },
+  {
+    "id": "ant-man-and-the-wasp",
+    "title": "Ant-Man and the Wasp",
+    "year": 2018,
+    "posterPath": "posters/ant-man-and-the-wasp.jpg"
+  },
+  {
+    "id": "captain-marvel",
+    "title": "Captain Marvel",
+    "year": 2019,
+    "posterPath": "posters/captain-marvel.jpg"
+  },
+  {
+    "id": "avengers-endgame",
+    "title": "Avengers: Endgame",
+    "year": 2019,
+    "posterPath": "posters/avengers-endgame.jpg"
+  },
+  {
+    "id": "spider-man-far-from-home",
+    "title": "Spider-Man: Far From Home",
+    "year": 2019,
+    "posterPath": "posters/spider-man-far-from-home.jpg"
+  },
+  {
+    "id": "black-widow",
+    "title": "Black Widow",
+    "year": 2021,
+    "posterPath": "posters/black-widow.jpg"
+  },
+  {
+    "id": "shang-chi-and-the-legend-of-the-ten-rings",
+    "title": "Shang-Chi and the Legend of the Ten Rings",
+    "year": 2021,
+    "posterPath": "posters/shang-chi-and-the-legend-of-the-ten-rings.jpg"
+  },
+  {
+    "id": "eternals",
+    "title": "Eternals",
+    "year": 2021,
+    "posterPath": "posters/eternals.jpg"
+  },
+  {
+    "id": "spider-man-no-way-home",
+    "title": "Spider-Man: No Way Home",
+    "year": 2021,
+    "posterPath": "posters/spider-man-no-way-home.jpg"
+  },
+  {
+    "id": "doctor-strange-in-the-multiverse-of-madness",
+    "title": "Doctor Strange in the Multiverse of Madness",
+    "year": 2022,
+    "posterPath": "posters/doctor-strange-in-the-multiverse-of-madness.jpg"
+  },
+  {
+    "id": "thor-love-and-thunder",
+    "title": "Thor: Love and Thunder",
+    "year": 2022,
+    "posterPath": "posters/thor-love-and-thunder.jpg"
+  },
+  {
+    "id": "black-panther-wakanda-forever",
+    "title": "Black Panther: Wakanda Forever",
+    "year": 2022,
+    "posterPath": "posters/black-panther-wakanda-forever.jpg"
+  },
+  {
+    "id": "ant-man-and-the-wasp-quantumania",
+    "title": "Ant-Man and the Wasp: Quantumania",
+    "year": 2023,
+    "posterPath": "posters/ant-man-and-the-wasp-quantumania.jpg"
+  },
+  {
+    "id": "guardians-of-the-galaxy-vol-3",
+    "title": "Guardians of the Galaxy Vol. 3",
+    "year": 2023,
+    "posterPath": "posters/guardians-of-the-galaxy-vol-3.jpg"
+  },
+  {
+    "id": "the-marvels",
+    "title": "The Marvels",
+    "year": 2023,
+    "posterPath": "posters/the-marvels.jpg"
+  },
+  {
+    "id": "deadpool-and-wolverine",
+    "title": "Deadpool & Wolverine",
+    "year": 2024,
+    "posterPath": "posters/deadpool-and-wolverine.jpg"
+  },
+  {
+    "id": "captain-america-brave-new-world",
+    "title": "Captain America: Brave New World",
+    "year": 2025,
+    "posterPath": "posters/captain-america-brave-new-world.jpg"
+  },
+  {
+    "id": "thunderbolts",
+    "title": "Thunderbolts*",
+    "year": 2025,
+    "posterPath": "posters/thunderbolts.jpg"
+  },
+  {
+    "id": "the-fantastic-four-first-steps",
+    "title": "The Fantastic Four: First Steps",
+    "year": 2025,
+    "posterPath": "posters/the-fantastic-four-first-steps.jpg"
   }
 ];
