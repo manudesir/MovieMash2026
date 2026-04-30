@@ -10,11 +10,15 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "pretest:e2e": "npm run build",
+    "test:e2e": "playwright test",
+    "generate:posters": "tsx scripts/generateLocalPosters.ts",
+    "ingest:films": "tsx scripts/ingestFilmsFromTmdb.ts"
   },
   "dependencies": {
     "dexie": "4.4.2",
     "dexie-react-hooks": "4.4.0",
+    "lucide-react": "1.14.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "react-router-dom": "7.14.2",
@@ -34,9 +38,11 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "4.1.5",
+    "cheerio": "1.2.0",
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "fake-indexeddb": "6.2.5",
     "globals": "^17.5.0",
     "jsdom": "29.1.1",
     "tsx": "4.21.0",

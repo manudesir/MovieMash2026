@@ -1,10 +1,14 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
+import { App } from './app/App'
+import { registerServiceWorker } from './app/registerServiceWorker'
+import { offlineFilmAssetUrls } from './modules/content/filmSource'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
   </StrictMode>,
 )
+
+registerServiceWorker(offlineFilmAssetUrls)
