@@ -1,0 +1,87 @@
+{
+  "folders": [
+    {
+      "name": "MovieMash2026",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false,
+    "eslint.workingDirectories": [
+      {
+        "mode": "auto"
+      }
+    ],
+    "files.exclude": {
+      "**/.git": true,
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/coverage": true,
+      "**/playwright-report": true,
+      "**/test-results": true
+    },
+    "search.exclude": {
+      "**/.analysis": true,
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/coverage": true,
+      "**/playwright-report": true,
+      "**/test-results": true
+    },
+    "typescript.tsdk": "node_modules/typescript/lib"
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "dev",
+        "type": "npm",
+        "script": "dev",
+        "isBackground": true,
+        "problemMatcher": []
+      },
+      {
+        "label": "build",
+        "type": "npm",
+        "script": "build",
+        "problemMatcher": "$tsc"
+      },
+      {
+        "label": "lint",
+        "type": "npm",
+        "script": "lint",
+        "problemMatcher": []
+      },
+      {
+        "label": "test",
+        "type": "npm",
+        "script": "test",
+        "group": "test",
+        "problemMatcher": []
+      },
+      {
+        "label": "test:e2e",
+        "type": "npm",
+        "script": "test:e2e",
+        "group": "test",
+        "problemMatcher": []
+      },
+      {
+        "label": "preview",
+        "type": "npm",
+        "script": "preview",
+        "isBackground": true,
+        "problemMatcher": []
+      }
+    ]
+  },
+  "extensions": {
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "ms-playwright.playwright",
+      "vitest.explorer",
+      "esbenp.prettier-vscode"
+    ]
+  }
+}
