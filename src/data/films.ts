@@ -600,5 +600,413 @@ export const frozenFilms: Film[] = [
     "title": "The Wolf of Wall Street",
     "year": 2013,
     "posterPath": "posters/wolf-of-wall-street.jpg"
+  },
+  {
+    "id": "a-bug-s-life",
+    "title": "A Bug's Life",
+    "year": 1998,
+    "posterPath": "posters/a-bug-s-life.jpg"
+  },
+  {
+    "id": "toy-story-2",
+    "title": "Toy Story 2",
+    "year": 1999,
+    "posterPath": "posters/toy-story-2.jpg"
+  },
+  {
+    "id": "monsters-inc",
+    "title": "Monsters, Inc.",
+    "year": 2001,
+    "posterPath": "posters/monsters-inc.jpg"
+  },
+  {
+    "id": "cars",
+    "title": "Cars",
+    "year": 2006,
+    "posterPath": "posters/cars.jpg"
+  },
+  {
+    "id": "toy-story-3",
+    "title": "Toy Story 3",
+    "year": 2010,
+    "posterPath": "posters/toy-story-3.jpg"
+  },
+  {
+    "id": "cars-2",
+    "title": "Cars 2",
+    "year": 2011,
+    "posterPath": "posters/cars-2.jpg"
+  },
+  {
+    "id": "brave",
+    "title": "Brave",
+    "year": 2012,
+    "posterPath": "posters/brave.jpg"
+  },
+  {
+    "id": "monsters-university",
+    "title": "Monsters University",
+    "year": 2013,
+    "posterPath": "posters/monsters-university.jpg"
+  },
+  {
+    "id": "the-good-dinosaur",
+    "title": "The Good Dinosaur",
+    "year": 2015,
+    "posterPath": "posters/the-good-dinosaur.jpg"
+  },
+  {
+    "id": "finding-dory",
+    "title": "Finding Dory",
+    "year": 2016,
+    "posterPath": "posters/finding-dory.jpg"
+  },
+  {
+    "id": "cars-3",
+    "title": "Cars 3",
+    "year": 2017,
+    "posterPath": "posters/cars-3.jpg"
+  },
+  {
+    "id": "coco",
+    "title": "Coco",
+    "year": 2017,
+    "posterPath": "posters/coco.jpg"
+  },
+  {
+    "id": "incredibles-2",
+    "title": "Incredibles 2",
+    "year": 2018,
+    "posterPath": "posters/incredibles-2.jpg"
+  },
+  {
+    "id": "toy-story-4",
+    "title": "Toy Story 4",
+    "year": 2019,
+    "posterPath": "posters/toy-story-4.jpg"
+  },
+  {
+    "id": "onward",
+    "title": "Onward",
+    "year": 2020,
+    "posterPath": "posters/onward.jpg"
+  },
+  {
+    "id": "luca",
+    "title": "Luca",
+    "year": 2021,
+    "posterPath": "posters/luca.jpg"
+  },
+  {
+    "id": "turning-red",
+    "title": "Turning Red",
+    "year": 2022,
+    "posterPath": "posters/turning-red.jpg"
+  },
+  {
+    "id": "lightyear",
+    "title": "Lightyear",
+    "year": 2022,
+    "posterPath": "posters/lightyear.jpg"
+  },
+  {
+    "id": "elemental",
+    "title": "Elemental",
+    "year": 2023,
+    "posterPath": "posters/elemental.jpg"
+  },
+  {
+    "id": "inside-out-2",
+    "title": "Inside Out 2",
+    "year": 2024,
+    "posterPath": "posters/inside-out-2.jpg"
+  },
+  {
+    "id": "elio",
+    "title": "Elio",
+    "year": 2025,
+    "posterPath": "posters/elio.jpg"
+  },
+  {
+    "id": "hoppers",
+    "title": "Hoppers",
+    "year": 2026,
+    "posterPath": "posters/hoppers.jpg"
+  },
+  {
+    "id": "the-fox-and-the-hound",
+    "title": "The Fox and the Hound",
+    "year": 1981,
+    "posterPath": "posters/the-fox-and-the-hound.jpg"
+  },
+  {
+    "id": "the-black-cauldron",
+    "title": "The Black Cauldron",
+    "year": 1985,
+    "posterPath": "posters/the-black-cauldron.jpg"
+  },
+  {
+    "id": "the-great-mouse-detective",
+    "title": "The Great Mouse Detective",
+    "year": 1986,
+    "posterPath": "posters/the-great-mouse-detective.jpg"
+  },
+  {
+    "id": "oliver-and-company",
+    "title": "Oliver & Company",
+    "year": 1988,
+    "posterPath": "posters/oliver-and-company.jpg"
+  },
+  {
+    "id": "the-little-mermaid",
+    "title": "The Little Mermaid",
+    "year": 1989,
+    "posterPath": "posters/the-little-mermaid.jpg"
+  },
+  {
+    "id": "the-rescuers-down-under",
+    "title": "The Rescuers Down Under",
+    "year": 1990,
+    "posterPath": "posters/the-rescuers-down-under.jpg"
+  },
+  {
+    "id": "beauty-and-the-beast",
+    "title": "Beauty and the Beast",
+    "year": 1991,
+    "posterPath": "posters/beauty-and-the-beast.jpg"
+  },
+  {
+    "id": "aladdin",
+    "title": "Aladdin",
+    "year": 1992,
+    "posterPath": "posters/aladdin.jpg"
+  },
+  {
+    "id": "pocahontas",
+    "title": "Pocahontas",
+    "year": 1995,
+    "posterPath": "posters/pocahontas.jpg"
+  },
+  {
+    "id": "the-hunchback-of-notre-dame",
+    "title": "The Hunchback of Notre Dame",
+    "year": 1996,
+    "posterPath": "posters/the-hunchback-of-notre-dame.jpg"
+  },
+  {
+    "id": "hercules",
+    "title": "Hercules",
+    "year": 1997,
+    "posterPath": "posters/hercules.jpg"
+  },
+  {
+    "id": "mulan",
+    "title": "Mulan",
+    "year": 1998,
+    "posterPath": "posters/mulan.jpg"
+  },
+  {
+    "id": "tarzan",
+    "title": "Tarzan",
+    "year": 1999,
+    "posterPath": "posters/tarzan.jpg"
+  },
+  {
+    "id": "fantasia-2000",
+    "title": "Fantasia 2000",
+    "year": 2000,
+    "posterPath": "posters/fantasia-2000.jpg"
+  },
+  {
+    "id": "dinosaur",
+    "title": "Dinosaur",
+    "year": 2000,
+    "posterPath": "posters/dinosaur.jpg"
+  },
+  {
+    "id": "the-emperor-s-new-groove",
+    "title": "The Emperor's New Groove",
+    "year": 2000,
+    "posterPath": "posters/the-emperor-s-new-groove.jpg"
+  },
+  {
+    "id": "atlantis-the-lost-empire",
+    "title": "Atlantis: The Lost Empire",
+    "year": 2001,
+    "posterPath": "posters/atlantis-the-lost-empire.jpg"
+  },
+  {
+    "id": "lilo-and-stitch",
+    "title": "Lilo & Stitch",
+    "year": 2002,
+    "posterPath": "posters/lilo-and-stitch.jpg"
+  },
+  {
+    "id": "treasure-planet",
+    "title": "Treasure Planet",
+    "year": 2002,
+    "posterPath": "posters/treasure-planet.jpg"
+  },
+  {
+    "id": "brother-bear",
+    "title": "Brother Bear",
+    "year": 2003,
+    "posterPath": "posters/brother-bear.jpg"
+  },
+  {
+    "id": "home-on-the-range",
+    "title": "Home on the Range",
+    "year": 2004,
+    "posterPath": "posters/home-on-the-range.jpg"
+  },
+  {
+    "id": "chicken-little",
+    "title": "Chicken Little",
+    "year": 2005,
+    "posterPath": "posters/chicken-little.jpg"
+  },
+  {
+    "id": "meet-the-robinsons",
+    "title": "Meet the Robinsons",
+    "year": 2007,
+    "posterPath": "posters/meet-the-robinsons.jpg"
+  },
+  {
+    "id": "bolt",
+    "title": "Bolt",
+    "year": 2008,
+    "posterPath": "posters/bolt.jpg"
+  },
+  {
+    "id": "the-princess-and-the-frog",
+    "title": "The Princess and the Frog",
+    "year": 2009,
+    "posterPath": "posters/the-princess-and-the-frog.jpg"
+  },
+  {
+    "id": "tangled",
+    "title": "Tangled",
+    "year": 2010,
+    "posterPath": "posters/tangled.jpg"
+  },
+  {
+    "id": "winnie-the-pooh",
+    "title": "Winnie the Pooh",
+    "year": 2011,
+    "posterPath": "posters/winnie-the-pooh.jpg"
+  },
+  {
+    "id": "wreck-it-ralph",
+    "title": "Wreck-It Ralph",
+    "year": 2012,
+    "posterPath": "posters/wreck-it-ralph.jpg"
+  },
+  {
+    "id": "frozen",
+    "title": "Frozen",
+    "year": 2013,
+    "posterPath": "posters/frozen.jpg"
+  },
+  {
+    "id": "big-hero-6",
+    "title": "Big Hero 6",
+    "year": 2014,
+    "posterPath": "posters/big-hero-6.jpg"
+  },
+  {
+    "id": "zootopia",
+    "title": "Zootopia",
+    "year": 2016,
+    "posterPath": "posters/zootopia.jpg"
+  },
+  {
+    "id": "moana",
+    "title": "Moana",
+    "year": 2016,
+    "posterPath": "posters/moana.jpg"
+  },
+  {
+    "id": "ralph-breaks-the-internet",
+    "title": "Ralph Breaks the Internet",
+    "year": 2018,
+    "posterPath": "posters/ralph-breaks-the-internet.jpg"
+  },
+  {
+    "id": "frozen-2",
+    "title": "Frozen 2",
+    "year": 2019,
+    "posterPath": "posters/frozen-2.jpg"
+  },
+  {
+    "id": "raya-and-the-last-dragon",
+    "title": "Raya and the Last Dragon",
+    "year": 2021,
+    "posterPath": "posters/raya-and-the-last-dragon.jpg"
+  },
+  {
+    "id": "encanto",
+    "title": "Encanto",
+    "year": 2021,
+    "posterPath": "posters/encanto.jpg"
+  },
+  {
+    "id": "strange-world",
+    "title": "Strange World",
+    "year": 2022,
+    "posterPath": "posters/strange-world.jpg"
+  },
+  {
+    "id": "wish",
+    "title": "Wish",
+    "year": 2023,
+    "posterPath": "posters/wish.jpg"
+  },
+  {
+    "id": "moana-2",
+    "title": "Moana 2",
+    "year": 2024,
+    "posterPath": "posters/moana-2.jpg"
+  },
+  {
+    "id": "zootopia-2",
+    "title": "Zootopia 2",
+    "year": 2025,
+    "posterPath": "posters/zootopia-2.jpg"
+  },
+  {
+    "id": "pacific-rim",
+    "title": "Pacific Rim",
+    "year": 2013,
+    "posterPath": "posters/pacific-rim.jpg"
+  },
+  {
+    "id": "the-thin-red-line",
+    "title": "The Thin Red Line",
+    "year": 1998,
+    "posterPath": "posters/the-thin-red-line.jpg"
+  },
+  {
+    "id": "the-animatrix",
+    "title": "The Animatrix",
+    "year": 2003,
+    "posterPath": "posters/the-animatrix.jpg"
+  },
+  {
+    "id": "the-lord-of-the-rings-the-fellowship-of-the-ring",
+    "title": "The Lord of the Rings: The Fellowship of the Ring",
+    "year": 2001,
+    "posterPath": "posters/the-lord-of-the-rings-the-fellowship-of-the-ring.jpg"
+  },
+  {
+    "id": "the-lord-of-the-rings-the-return-of-the-king",
+    "title": "The Lord of the Rings: The Return of the King",
+    "year": 2003,
+    "posterPath": "posters/the-lord-of-the-rings-the-return-of-the-king.jpg"
+  },
+  {
+    "id": "the-lord-of-the-rings-the-war-of-the-rohirrim",
+    "title": "The Lord of the Rings: The War of the Rohirrim",
+    "year": 2024,
+    "posterPath": "posters/the-lord-of-the-rings-the-war-of-the-rohirrim.jpg"
   }
 ];
