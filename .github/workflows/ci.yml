@@ -4,10 +4,20 @@ on:
   pull_request:
     branches:
       - main
+    types:
+      - opened
+      - synchronize
+      - reopened
   push:
     branches:
       - main
-      - feature/action-movie-list
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-preview-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref_name }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -29,3 +39,166 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+  deploy-preview:
+    name: Deploy GitHub Pages preview
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure preview metadata
+        id: preview
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          REF_NAME: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          REPOSITORY: ${{ github.repository }}
+          REPOSITORY_OWNER: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+
+          repo_name="${REPOSITORY#*/}"
+
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            preview_id="pr-${PR_NUMBER}"
+            preview_name="PR #${PR_NUMBER} — ${PR_BRANCH}"
+            preview_branch="$PR_BRANCH"
+            preview_kind="pull_request"
+            preview_pr_number="$PR_NUMBER"
+          else
+            preview_id="main"
+            preview_name="main"
+            preview_branch="$REF_NAME"
+            preview_kind="main"
+            preview_pr_number=""
+          fi
+
+          preview_path="/$(printf '%s' "$repo_name")/previews/${preview_id}/"
+          preview_url="https://${REPOSITORY_OWNER}.github.io/${repo_name}/previews/${preview_id}/"
+
+          {
+            echo "preview_id=$preview_id"
+            echo "preview_name=$preview_name"
+            echo "preview_branch=$preview_branch"
+            echo "preview_kind=$preview_kind"
+            echo "preview_pr_number=$preview_pr_number"
+            echo "preview_path=$preview_path"
+            echo "preview_url=$preview_url"
+            echo "sha=$SHA"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Build preview
+        env:
+          VITE_BASE_PATH: ${{ steps.preview.outputs.preview_path }}
+        run: npm run build
+
+      - name: Publish preview to gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PREVIEW_ID: ${{ steps.preview.outputs.preview_id }}
+          PREVIEW_NAME: ${{ steps.preview.outputs.preview_name }}
+          PREVIEW_BRANCH: ${{ steps.preview.outputs.preview_branch }}
+          PREVIEW_KIND: ${{ steps.preview.outputs.preview_kind }}
+          PREVIEW_PR_NUMBER: ${{ steps.preview.outputs.preview_pr_number }}
+          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
+          SHA: ${{ steps.preview.outputs.sha }}
+        run: |
+          set -euo pipefail
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          mkdir pages
+          cd pages
+          git init
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
+          if git fetch origin gh-pages; then
+            git checkout -B gh-pages origin/gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          mkdir -p previews
+          rm -rf "previews/${PREVIEW_ID}"
+          mkdir -p "previews/${PREVIEW_ID}"
+          cp -R ../dist/. "previews/${PREVIEW_ID}/"
+          touch .nojekyll
+
+          cat > index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <meta http-equiv="refresh" content="0; url=./previews/main/" />
+              <title>Movie Mash previews</title>
+            </head>
+            <body>
+              <p><a href="./previews/main/">Open Movie Mash main preview</a></p>
+            </body>
+          </html>
+          HTML
+
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+
+          const manifestPath = path.join('previews', 'manifest.json');
+          const existing = fs.existsSync(manifestPath)
+            ? JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+            : { deployments: [] };
+
+          const current = {
+            id: process.env.PREVIEW_ID,
+            name: process.env.PREVIEW_NAME,
+            branch: process.env.PREVIEW_BRANCH,
+            kind: process.env.PREVIEW_KIND,
+            url: process.env.PREVIEW_URL,
+            updatedAt: new Date().toISOString(),
+            sha: process.env.SHA,
+          };
+
+          if (process.env.PREVIEW_PR_NUMBER) {
+            current.prNumber = Number(process.env.PREVIEW_PR_NUMBER);
+          }
+
+          const deployments = existing.deployments
+            .filter((deployment) => deployment.id !== current.id)
+            .filter((deployment) => fs.existsSync(path.join('previews', deployment.id, 'index.html')));
+
+          deployments.push(current);
+          deployments.sort((first, second) => {
+            if (first.id === 'main') return -1;
+            if (second.id === 'main') return 1;
+            return second.updatedAt.localeCompare(first.updatedAt);
+          });
+
+          fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
+          fs.writeFileSync(manifestPath, `${JSON.stringify({ deployments }, null, 2)}\n`);
+          NODE
+
+          git add .
+          if git diff --cached --quiet; then
+            echo "No GitHub Pages changes to publish."
+            exit 0
+          fi
+
+          git commit -m "Deploy ${PREVIEW_ID} preview"
+          git push origin gh-pages
