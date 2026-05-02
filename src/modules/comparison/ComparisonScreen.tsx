@@ -27,7 +27,7 @@ export function ComparisonScreen({ flow, catalog }: ComparisonScreenProps) {
   return (
     <main className="comparison-screen">
       <header className="comparison-header">
-        <div className="catalog-switch" aria-label="Movie list selector">
+        <nav className="catalog-switch" aria-label="Movie list selector">
           {filmCatalogs.map((availableCatalog) => (
             <Link
               key={availableCatalog.id}
@@ -41,12 +41,12 @@ export function ComparisonScreen({ flow, catalog }: ComparisonScreenProps) {
               {availableCatalog.shortLabel}
             </Link>
           ))}
-        </div>
+        </nav>
         <p className="eyebrow">{catalog.eyebrow}</p>
         <h1>{catalog.title}</h1>
       </header>
 
-      <header className="comparison-status" aria-label="Session progress">
+      <header className="comparison-status">
         <span>{flow.comparisonCount} picks</span>
         <span>{flow.activeCount} active</span>
         <span>{flow.totalCount} total</span>

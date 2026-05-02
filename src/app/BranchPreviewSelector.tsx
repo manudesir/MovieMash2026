@@ -1,40 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
+import {
+  findCurrentDeployment,
+  getPreviewContext,
+  getPreviewRedirectUrl,
+  type PreviewDeployment,
+} from './BranchPreviewSelectorModel';
 import './BranchPreviewSelector.css';
-
-type PreviewDeployment = {
-  id: string;
-  name: string;
-  branch: string;
-  kind: 'main' | 'pull_request';
-  prNumber?: number;
-  url: string;
-  updatedAt: string;
-  sha: string;
-};
 
 type PreviewManifest = {
   deployments: PreviewDeployment[];
 };
 
-function getPreviewContext() {
-  const baseUrl = new URL(import.meta.env.BASE_URL, window.location.origin);
-  const previewsSegmentIndex = baseUrl.pathname.indexOf('/previews/');
-
-  if (previewsSegmentIndex === -1) {
-    return undefined;
-  }
-
-  const repositoryBasePath = baseUrl.pathname.slice(0, previewsSegmentIndex);
-  return {
-    currentBasePath: baseUrl.pathname,
-    manifestUrl: `${window.location.origin}${repositoryBasePath}/previews/manifest.json`,
-  };
-}
-
 export function BranchPreviewSelector() {
-  const previewContext = useMemo(() => getPreviewContext(), []);
+  const previewContext = useMemo(() => getPreviewContext(import.meta.env.BASE_URL, window.location.origin), []);
   const [deployments, setDeployments] = useState<PreviewDeployment[]>([]);
 
+  // Load the manifest only when this build is running from a GitHub Pages preview path.
   useEffect(() => {
     if (!previewContext) {
       return;
@@ -64,10 +45,7 @@ export function BranchPreviewSelector() {
     return null;
   }
 
-  const currentDeployment = deployments.find((deployment) => {
-    const deploymentUrl = new URL(deployment.url);
-    return previewContext.currentBasePath.startsWith(deploymentUrl.pathname);
-  });
+  const currentDeployment = findCurrentDeployment(deployments, previewContext.currentBasePath);
 
   function handleChange(nextDeploymentId: string) {
     const nextDeployment = deployments.find((deployment) => deployment.id === nextDeploymentId);
@@ -76,7 +54,7 @@ export function BranchPreviewSelector() {
       return;
     }
 
-    window.location.href = `${nextDeployment.url}${window.location.hash}`;
+    window.location.href = getPreviewRedirectUrl(nextDeployment, window.location.hash);
   }
 
   return (
