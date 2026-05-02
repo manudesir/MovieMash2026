@@ -6,20 +6,15 @@ import { ItemCard } from './ItemCard';
 import { TieButton } from './TieButton';
 import type { ComparisonFlow } from './useComparisonFlow';
 import { useIdleVisibility } from './useIdleVisibility';
-import { actionFilmCatalog, defaultFilmCatalog, type FilmCatalog } from '../content/filmSource';
+import { filmCatalogs, type FilmCatalog } from '../content/filmSource';
 
 type ComparisonScreenProps = {
   flow: ComparisonFlow;
   catalog: FilmCatalog;
 };
 
-function getOtherCatalog(catalog: FilmCatalog) {
-  return catalog.id === 'action' ? defaultFilmCatalog : actionFilmCatalog;
-}
-
 export function ComparisonScreen({ flow, catalog }: ComparisonScreenProps) {
   const rankingButtonVisible = useIdleVisibility(flow.isInteracting, flow.feedback?.id);
-  const otherCatalog = getOtherCatalog(catalog);
 
   if (!flow.leftItem || !flow.rightItem) {
     return (
@@ -33,18 +28,19 @@ export function ComparisonScreen({ flow, catalog }: ComparisonScreenProps) {
     <main className="comparison-screen">
       <header className="comparison-header">
         <div className="catalog-switch" aria-label="Movie list selector">
-          <Link
-            to={defaultFilmCatalog.comparisonPath}
-            className={catalog.id === 'default' ? 'catalog-switch__link catalog-switch__link--active' : 'catalog-switch__link'}
-          >
-            Default
-          </Link>
-          <Link
-            to={actionFilmCatalog.comparisonPath}
-            className={catalog.id === 'action' ? 'catalog-switch__link catalog-switch__link--active' : 'catalog-switch__link'}
-          >
-            Action
-          </Link>
+          {filmCatalogs.map((availableCatalog) => (
+            <Link
+              key={availableCatalog.id}
+              to={availableCatalog.comparisonPath}
+              className={
+                availableCatalog.id === catalog.id
+                  ? 'catalog-switch__link catalog-switch__link--active'
+                  : 'catalog-switch__link'
+              }
+            >
+              {availableCatalog.shortLabel}
+            </Link>
+          ))}
         </div>
         <p className="eyebrow">{catalog.eyebrow}</p>
         <h1>{catalog.title}</h1>
@@ -79,9 +75,6 @@ export function ComparisonScreen({ flow, catalog }: ComparisonScreenProps) {
       <ConfirmationBurst feedback={flow.feedback} />
       <CelebrationToast visible={flow.celebrationVisible} onClose={() => flow.setCelebrationVisible(false)} />
       <FloatingRankingButton visible={rankingButtonVisible} to={catalog.rankingPath} />
-      <Link className="catalog-shortcut" to={otherCatalog.comparisonPath}>
-        Switch to {otherCatalog.title.toLowerCase()}
-      </Link>
     </main>
   );
 }
