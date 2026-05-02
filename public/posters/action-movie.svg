@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 720" role="img" aria-labelledby="title desc">
+  <title id="title">Action movie poster placeholder</title>
+  <desc id="desc">A stylized action movie poster placeholder with bold geometric shapes.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17211b"/>
+      <stop offset="0.52" stop-color="#315d9c"/>
+      <stop offset="1" stop-color="#e85d47"/>
+    </linearGradient>
+    <linearGradient id="flare" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff6cc" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#e0b846" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="720" fill="url(#sky)"/>
+  <circle cx="370" cy="120" r="92" fill="url(#flare)" opacity="0.85"/>
+  <path d="M0 525 112 390 172 470 268 302 480 556v164H0z" fill="#101815" opacity="0.78"/>
+  <path d="M118 560h244l-34 118H152z" fill="#f4f8f1" opacity="0.16"/>
+  <path d="M222 275h36l18 240h-72z" fill="#f4f8f1" opacity="0.9"/>
+  <path d="M188 310 82 260l-14 30 118 82zM292 310l106-50 14 30-118 82z" fill="#f4f8f1" opacity="0.82"/>
+  <path d="M210 214h60l-12 54h-36z" fill="#f4f8f1" opacity="0.94"/>
+  <path d="M142 634h196" stroke="#f4f8f1" stroke-width="10" stroke-linecap="round" opacity="0.55"/>
+  <text x="240" y="86" fill="#f4f8f1" font-family="Trebuchet MS, Verdana, sans-serif" font-size="42" font-weight="800" text-anchor="middle" letter-spacing="4">ACTION</text>
+  <text x="240" y="134" fill="#f4f8f1" font-family="Georgia, Times New Roman, serif" font-size="28" font-weight="700" text-anchor="middle">MOVIE</text>
+</svg>
