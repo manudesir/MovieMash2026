@@ -147,11 +147,30 @@ jobs:
             <head>
               <meta charset="UTF-8" />
               <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              <meta http-equiv="refresh" content="0; url=./previews/main/" />
               <title>Movie Mash previews</title>
+              <script>
+                async function redirectToAvailablePreview() {
+                  try {
+                    const response = await fetch('./previews/manifest.json', { cache: 'no-store' });
+                    const manifest = await response.json();
+                    const deployments = Array.isArray(manifest.deployments) ? manifest.deployments : [];
+                    const target = deployments.find((deployment) => deployment.id === 'main') || deployments[0];
+
+                    if (target?.url) {
+                      window.location.replace(target.url);
+                      return;
+                    }
+                  } catch (error) {
+                    console.error('Unable to load preview manifest', error);
+                  }
+                }
+
+                redirectToAvailablePreview();
+              </script>
             </head>
             <body>
-              <p><a href="./previews/main/">Open Movie Mash main preview</a></p>
+              <p>Loading Movie Mash preview...</p>
+              <p><a href="./previews/manifest.json">Open preview manifest</a></p>
             </body>
           </html>
           HTML
