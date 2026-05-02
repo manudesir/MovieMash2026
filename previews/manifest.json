@@ -6,17 +6,17 @@
       "branch": "main",
       "kind": "main",
       "url": "https://manudesir.github.io/MovieMash2026/",
-      "updatedAt": "2026-05-02T19:59:19.633Z",
+      "updatedAt": "2026-05-02T21:35:10.658Z",
       "sha": "40439526d93b94a0dddc6fbd4ca87d9263d31c6f"
     },
     {
       "id": "pr-1",
-      "name": "PR #1 — feature/action-movie-list",
+      "name": "PR #1 - feature/action-movie-list",
       "branch": "feature/action-movie-list",
       "kind": "pull_request",
       "url": "https://manudesir.github.io/MovieMash2026/previews/pr-1/",
-      "updatedAt": "2026-05-02T19:59:19.633Z",
-      "sha": "c8c571482da299c258a72fe583d11b8575fe7523",
+      "updatedAt": "2026-05-02T21:35:10.778Z",
+      "sha": "d5e602cda0583dfe5ffaf3fba23e823b48861704",
       "prNumber": 1
     }
   ]
