@@ -1,13 +1,22 @@
 {
   "deployments": [
     {
+      "id": "main",
+      "name": "main",
+      "branch": "main",
+      "kind": "main",
+      "url": "https://manudesir.github.io/MovieMash2026/",
+      "updatedAt": "2026-05-02T12:57:56.714Z",
+      "sha": "40439526d93b94a0dddc6fbd4ca87d9263d31c6f"
+    },
+    {
       "id": "pr-1",
       "name": "PR #1 — feature/action-movie-list",
       "branch": "feature/action-movie-list",
       "kind": "pull_request",
       "url": "https://manudesir.github.io/MovieMash2026/previews/pr-1/",
-      "updatedAt": "2026-05-02T10:47:45.848Z",
-      "sha": "0208499a432be31cc20975d69aa234d405d19f1c",
+      "updatedAt": "2026-05-02T12:57:56.714Z",
+      "sha": "9dcd88054ebab0901702e80310a91bd7aff0ecfe",
       "prNumber": 1
     }
   ]

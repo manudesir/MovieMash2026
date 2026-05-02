@@ -2,30 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/MovieMash2026/favicon.svg" />
+    <link rel="manifest" href="/MovieMash2026/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Movie Mash previews</title>
-    <script>
-      async function redirectToAvailablePreview() {
-        try {
-          const response = await fetch('./previews/manifest.json', { cache: 'no-store' });
-          const manifest = await response.json();
-          const deployments = Array.isArray(manifest.deployments) ? manifest.deployments : [];
-          const target = deployments.find((deployment) => deployment.id === 'main') || deployments[0];
-
-          if (target?.url) {
-            window.location.replace(target.url);
-            return;
-          }
-        } catch (error) {
-          console.error('Unable to load preview manifest', error);
-        }
-      }
-
-      redirectToAvailablePreview();
-    </script>
+    <meta name="theme-color" content="#1f7a4c" />
+    <title>MovieMash</title>
+    <script type="module" crossorigin src="/MovieMash2026/assets/index-C6uuIx6f.js"></script>
+    <link rel="stylesheet" crossorigin href="/MovieMash2026/assets/index-BZW6tz8X.css">
   </head>
   <body>
-    <p>Loading Movie Mash preview...</p>
-    <p><a href="./previews/manifest.json">Open preview manifest</a></p>
+    <div id="root"></div>
   </body>
 </html>
