@@ -9,9 +9,9 @@ import { isLocalDevOrigin } from './devDatabaseTransferProtocol';
 
 export function AppRoutes() {
   const flows = {
-    default: useComparisonFlow(filmItemsByCatalogId.default),
-    action: useComparisonFlow(filmItemsByCatalogId.action),
-    comedy: useComparisonFlow(filmItemsByCatalogId.comedy),
+    default: useComparisonFlow('default', filmItemsByCatalogId.default),
+    action: useComparisonFlow('action', filmItemsByCatalogId.action),
+    comedy: useComparisonFlow('comedy', filmItemsByCatalogId.comedy),
   };
   const showDevDatabaseTransfer = import.meta.env.DEV && isLocalDevOrigin(window.location.origin);
 

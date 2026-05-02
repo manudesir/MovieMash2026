@@ -13,7 +13,7 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: pages-preview-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref_name }}
@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -40,23 +42,36 @@ jobs:
       - name: Run tests
         run: npm test
 
-  deploy-preview:
-    name: Deploy GitHub Pages preview
+  build-preview:
+    name: Build GitHub Pages preview
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    outputs:
+      main_url: ${{ steps.preview.outputs.main_url }}
+      preview_id: ${{ steps.preview.outputs.preview_id }}
+      preview_name: ${{ steps.preview.outputs.preview_name }}
+      preview_branch: ${{ steps.preview.outputs.preview_branch }}
+      preview_kind: ${{ steps.preview.outputs.preview_kind }}
+      preview_pr_number: ${{ steps.preview.outputs.preview_pr_number }}
+      preview_url: ${{ steps.preview.outputs.preview_url }}
+      should_build_preview: ${{ steps.preview.outputs.should_build_preview }}
+      main_sha: ${{ steps.shas.outputs.main_sha }}
+      preview_sha: ${{ steps.shas.outputs.preview_sha }}
 
     steps:
       - name: Checkout preview source
         uses: actions/checkout@v4
         with:
           path: preview-source
+          persist-credentials: false
 
       - name: Checkout official main source
         uses: actions/checkout@v4
         with:
           ref: main
           path: main-source
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -79,7 +94,7 @@ jobs:
 
           if [ "$EVENT_NAME" = "pull_request" ]; then
             preview_id="pr-${PR_NUMBER}"
-            preview_name="PR #${PR_NUMBER} — ${PR_BRANCH}"
+            preview_name="PR #${PR_NUMBER} - ${PR_BRANCH}"
             preview_branch="$PR_BRANCH"
             preview_kind="pull_request"
             preview_pr_number="$PR_NUMBER"
@@ -126,17 +141,73 @@ jobs:
           npm ci
           npm run build
 
+      - name: Capture source SHAs
+        id: shas
+        run: |
+          {
+            echo "main_sha=$(git -C main-source rev-parse HEAD)"
+            echo "preview_sha=$(git -C preview-source rev-parse HEAD)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Package official main app
+        run: |
+          mkdir main-dist-artifact
+          cp -R main-source/dist/. main-dist-artifact/
+
+      - name: Package PR preview app
+        if: steps.preview.outputs.should_build_preview == 'true'
+        run: |
+          mkdir preview-dist-artifact
+          cp -R preview-source/dist/. preview-dist-artifact/
+
+      - name: Upload official main app
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-main-dist
+          path: main-dist-artifact
+
+      - name: Upload PR preview app
+        if: steps.preview.outputs.should_build_preview == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-preview-dist
+          path: preview-dist-artifact
+
+  publish-preview:
+    name: Publish GitHub Pages preview
+    needs: build-preview
+    runs-on: ubuntu-latest
+    if: needs.build-preview.result == 'success'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download official main app
+        uses: actions/download-artifact@v4
+        with:
+          name: pages-main-dist
+          path: main-dist
+
+      - name: Download PR preview app
+        if: needs.build-preview.outputs.should_build_preview == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: pages-preview-dist
+          path: preview-dist
+
       - name: Publish to gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MAIN_URL: ${{ steps.preview.outputs.main_url }}
-          PREVIEW_ID: ${{ steps.preview.outputs.preview_id }}
-          PREVIEW_NAME: ${{ steps.preview.outputs.preview_name }}
-          PREVIEW_BRANCH: ${{ steps.preview.outputs.preview_branch }}
-          PREVIEW_KIND: ${{ steps.preview.outputs.preview_kind }}
-          PREVIEW_PR_NUMBER: ${{ steps.preview.outputs.preview_pr_number }}
-          PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
-          SHOULD_BUILD_PREVIEW: ${{ steps.preview.outputs.should_build_preview }}
+          MAIN_URL: ${{ needs.build-preview.outputs.main_url }}
+          PREVIEW_ID: ${{ needs.build-preview.outputs.preview_id }}
+          PREVIEW_NAME: ${{ needs.build-preview.outputs.preview_name }}
+          PREVIEW_BRANCH: ${{ needs.build-preview.outputs.preview_branch }}
+          PREVIEW_KIND: ${{ needs.build-preview.outputs.preview_kind }}
+          PREVIEW_PR_NUMBER: ${{ needs.build-preview.outputs.preview_pr_number }}
+          PREVIEW_URL: ${{ needs.build-preview.outputs.preview_url }}
+          SHOULD_BUILD_PREVIEW: ${{ needs.build-preview.outputs.should_build_preview }}
+          MAIN_SHA: ${{ needs.build-preview.outputs.main_sha }}
+          PREVIEW_SHA: ${{ needs.build-preview.outputs.preview_sha }}
         run: |
           set -euo pipefail
 
@@ -155,19 +226,27 @@ jobs:
             git rm -rf . >/dev/null 2>&1 || true
           fi
 
+          main_dist_path="../main-dist"
+          if [ -d "../main-dist/main-dist-artifact" ]; then
+            main_dist_path="../main-dist/main-dist-artifact"
+          fi
+
           mkdir -p previews
           find . -mindepth 1 -maxdepth 1 ! -name previews ! -name .git -exec rm -rf {} +
-          cp -R ../main-source/dist/. .
+          cp -R "${main_dist_path}/." .
           touch .nojekyll
 
           if [ "$SHOULD_BUILD_PREVIEW" = "true" ]; then
+            preview_dist_path="../preview-dist"
+            if [ -d "../preview-dist/preview-dist-artifact" ]; then
+              preview_dist_path="../preview-dist/preview-dist-artifact"
+            fi
+
             rm -rf "previews/${PREVIEW_ID}"
             mkdir -p "previews/${PREVIEW_ID}"
-            cp -R ../preview-source/dist/. "previews/${PREVIEW_ID}/"
+            cp -R "${preview_dist_path}/." "previews/${PREVIEW_ID}/"
           fi
 
-          MAIN_SHA="$(git -C ../main-source rev-parse HEAD)"
-          PREVIEW_SHA="$(git -C ../preview-source rev-parse HEAD)"
           export MAIN_SHA PREVIEW_SHA
 
           node <<'NODE'

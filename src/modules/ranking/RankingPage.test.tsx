@@ -7,8 +7,9 @@ import { actionFilmCatalog, filmItemsByCatalogId } from '../content/filmSource';
 import { db, resetDatabase } from '../persistence/db';
 import { RankingPage } from './RankingPage';
 
-function state(itemId: string, rating: number, index: number): RankingItemState {
+function state(catalogId: string, itemId: string, rating: number, index: number): RankingItemState {
   return {
+    catalogId,
     itemId,
     rating,
     appearances: 1,
@@ -43,13 +44,16 @@ describe('catalog ranking page', () => {
       throw new Error('Expected at least one comedy-only item for catalog scoping.');
     }
 
-    await db.rankingStates.bulkPut(
-      actionItems.map((item, index) => state(item.id, item.id === subject.id ? 1500 : 1000 - index, index)),
+    await db.catalogRankingStates.bulkPut(
+      actionItems.map((item, index) =>
+        state(actionFilmCatalog.id, item.id, item.id === subject.id ? 1500 : 1000 - index, index),
+      ),
     );
-    await db.rankingStates.put(state(outsideOpponent.id, 1600, 100));
+    await db.catalogRankingStates.put(state(actionFilmCatalog.id, outsideOpponent.id, 1600, 100));
     await db.comparisons.bulkPut([
       {
         id: 'inside-action',
+        catalogId: actionFilmCatalog.id,
         outcomeType: 'winner',
         winnerId: subject.id,
         loserId: actionOpponent.id,
@@ -61,6 +65,7 @@ describe('catalog ranking page', () => {
       },
       {
         id: 'outside-action',
+        catalogId: actionFilmCatalog.id,
         outcomeType: 'winner',
         winnerId: subject.id,
         loserId: outsideOpponent.id,

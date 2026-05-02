@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
-import { allFilmItems } from '../modules/content/filmSource';
+import { filmCatalogs, filmItemsByCatalogId } from '../modules/content/filmSource';
 import { initializeRankingStates } from '../modules/persistence/rankingRepository';
 import { AppLoading } from './AppLoading';
 import { AppRoutes } from './AppRoutes';
 import { useProductionDatabaseImport } from './useProductionDatabaseImport';
+
+const rankingScopes = filmCatalogs.map((catalog) => ({
+  catalogId: catalog.id,
+  items: filmItemsByCatalogId[catalog.id],
+}));
 
 export function App() {
   const [ready, setReady] = useState(false);
@@ -14,7 +19,7 @@ export function App() {
   useEffect(() => {
     let mounted = true;
 
-    void initializeRankingStates(allFilmItems).then(() => {
+    void initializeRankingStates(rankingScopes).then(() => {
       if (mounted) {
         setReady(true);
       }

@@ -34,14 +34,15 @@ export function RankingPage({ catalog }: RankingPageProps) {
       ties: 0,
       active: true,
       notSeen: false,
+      catalogId: catalog.id,
       createdAt: 0,
       updatedAt: 0,
     }));
-  }, [itemIds]);
+  }, [catalog.id, itemIds]);
   const itemById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
   const itemIdSet = useMemo(() => new Set(itemIds), [itemIds]);
-  const states = useLiveQuery(() => listRankingStates(itemIds), [itemIds], fallbackStates);
-  const records = useLiveQuery(listComparisonRecords, [], []);
+  const states = useLiveQuery(() => listRankingStates(catalog.id, itemIds), [catalog.id, itemIds], fallbackStates);
+  const records = useLiveQuery(() => listComparisonRecords(catalog.id), [catalog.id], []);
   const catalogRecords = records.filter(
     (record) =>
       recordIsInCatalog(itemIdSet, record.leftId) &&
@@ -58,7 +59,7 @@ export function RankingPage({ catalog }: RankingPageProps) {
   const canRemoveFromRanking = rankedStates.length > MINIMUM_ACTIVE_ITEMS;
 
   async function handleMarkNotSeen(itemId: string, itemLabel: string) {
-    const result = await markRankingItemNotSeen(itemId, itemIds);
+    const result = await markRankingItemNotSeen(catalog.id, itemId, itemIds);
     console.log(result.applied ? `${itemLabel} not seen` : `${itemLabel} not seen blocked: ${result.reason}`);
 
     if (result.applied) {
