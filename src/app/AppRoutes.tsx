@@ -3,6 +3,7 @@ import { ComparisonScreen } from '../modules/comparison/ComparisonScreen';
 import { useComparisonFlow } from '../modules/comparison/useComparisonFlow';
 import { filmCatalogs, filmItemsByCatalogId } from '../modules/content/filmSource';
 import { RankingPage } from '../modules/ranking/RankingPage';
+import { BranchPreviewSelector } from './BranchPreviewSelector';
 import { DevDatabaseTransfer } from './DevDatabaseTransfer';
 import { isLocalDevOrigin } from './devDatabaseTransferProtocol';
 
@@ -29,6 +30,7 @@ export function AppRoutes() {
         ))}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <BranchPreviewSelector />
       {showDevDatabaseTransfer ? <DevDatabaseTransfer /> : null}
     </HashRouter>
   );
