@@ -47,17 +47,21 @@ jobs:
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
-      - name: Checkout repository
+      - name: Checkout preview source
         uses: actions/checkout@v4
+        with:
+          path: preview-source
+
+      - name: Checkout official main source
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-source
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
 
       - name: Configure preview metadata
         id: preview
@@ -65,14 +69,13 @@ jobs:
           EVENT_NAME: ${{ github.event_name }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_BRANCH: ${{ github.event.pull_request.head.ref }}
-          REF_NAME: ${{ github.ref_name }}
-          SHA: ${{ github.sha }}
           REPOSITORY: ${{ github.repository }}
           REPOSITORY_OWNER: ${{ github.repository_owner }}
         run: |
           set -euo pipefail
 
           repo_name="${REPOSITORY#*/}"
+          main_url="https://${REPOSITORY_OWNER}.github.io/${repo_name}/"
 
           if [ "$EVENT_NAME" = "pull_request" ]; then
             preview_id="pr-${PR_NUMBER}"
@@ -80,18 +83,22 @@ jobs:
             preview_branch="$PR_BRANCH"
             preview_kind="pull_request"
             preview_pr_number="$PR_NUMBER"
+            preview_path="/${repo_name}/previews/${preview_id}/"
+            preview_url="https://${REPOSITORY_OWNER}.github.io/${repo_name}/previews/${preview_id}/"
+            should_build_preview="true"
           else
             preview_id="main"
             preview_name="main"
-            preview_branch="$REF_NAME"
+            preview_branch="main"
             preview_kind="main"
             preview_pr_number=""
+            preview_path="/${repo_name}/"
+            preview_url="$main_url"
+            should_build_preview="false"
           fi
 
-          preview_path="/$(printf '%s' "$repo_name")/previews/${preview_id}/"
-          preview_url="https://${REPOSITORY_OWNER}.github.io/${repo_name}/previews/${preview_id}/"
-
           {
+            echo "main_url=$main_url"
             echo "preview_id=$preview_id"
             echo "preview_name=$preview_name"
             echo "preview_branch=$preview_branch"
@@ -99,24 +106,37 @@ jobs:
             echo "preview_pr_number=$preview_pr_number"
             echo "preview_path=$preview_path"
             echo "preview_url=$preview_url"
-            echo "sha=$SHA"
+            echo "should_build_preview=$should_build_preview"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Build preview
+      - name: Build official main app
+        working-directory: main-source
+        env:
+          VITE_BASE_PATH: /MovieMash2026/
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build PR preview app
+        if: steps.preview.outputs.should_build_preview == 'true'
+        working-directory: preview-source
         env:
           VITE_BASE_PATH: ${{ steps.preview.outputs.preview_path }}
-        run: npm run build
+        run: |
+          npm ci
+          npm run build
 
-      - name: Publish preview to gh-pages
+      - name: Publish to gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAIN_URL: ${{ steps.preview.outputs.main_url }}
           PREVIEW_ID: ${{ steps.preview.outputs.preview_id }}
           PREVIEW_NAME: ${{ steps.preview.outputs.preview_name }}
           PREVIEW_BRANCH: ${{ steps.preview.outputs.preview_branch }}
           PREVIEW_KIND: ${{ steps.preview.outputs.preview_kind }}
           PREVIEW_PR_NUMBER: ${{ steps.preview.outputs.preview_pr_number }}
           PREVIEW_URL: ${{ steps.preview.outputs.preview_url }}
-          SHA: ${{ steps.preview.outputs.sha }}
+          SHOULD_BUILD_PREVIEW: ${{ steps.preview.outputs.should_build_preview }}
         run: |
           set -euo pipefail
 
@@ -136,44 +156,19 @@ jobs:
           fi
 
           mkdir -p previews
-          rm -rf "previews/${PREVIEW_ID}"
-          mkdir -p "previews/${PREVIEW_ID}"
-          cp -R ../dist/. "previews/${PREVIEW_ID}/"
+          find . -mindepth 1 -maxdepth 1 ! -name previews ! -name .git -exec rm -rf {} +
+          cp -R ../main-source/dist/. .
           touch .nojekyll
 
-          cat > index.html <<'HTML'
-          <!doctype html>
-          <html lang="en">
-            <head>
-              <meta charset="UTF-8" />
-              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-              <title>Movie Mash previews</title>
-              <script>
-                async function redirectToAvailablePreview() {
-                  try {
-                    const response = await fetch('./previews/manifest.json', { cache: 'no-store' });
-                    const manifest = await response.json();
-                    const deployments = Array.isArray(manifest.deployments) ? manifest.deployments : [];
-                    const target = deployments.find((deployment) => deployment.id === 'main') || deployments[0];
+          if [ "$SHOULD_BUILD_PREVIEW" = "true" ]; then
+            rm -rf "previews/${PREVIEW_ID}"
+            mkdir -p "previews/${PREVIEW_ID}"
+            cp -R ../preview-source/dist/. "previews/${PREVIEW_ID}/"
+          fi
 
-                    if (target?.url) {
-                      window.location.replace(target.url);
-                      return;
-                    }
-                  } catch (error) {
-                    console.error('Unable to load preview manifest', error);
-                  }
-                }
-
-                redirectToAvailablePreview();
-              </script>
-            </head>
-            <body>
-              <p>Loading Movie Mash preview...</p>
-              <p><a href="./previews/manifest.json">Open preview manifest</a></p>
-            </body>
-          </html>
-          HTML
+          MAIN_SHA="$(git -C ../main-source rev-parse HEAD)"
+          PREVIEW_SHA="$(git -C ../preview-source rev-parse HEAD)"
+          export MAIN_SHA PREVIEW_SHA
 
           node <<'NODE'
           const fs = require('node:fs');
@@ -184,25 +179,42 @@ jobs:
             ? JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
             : { deployments: [] };
 
-          const current = {
-            id: process.env.PREVIEW_ID,
-            name: process.env.PREVIEW_NAME,
-            branch: process.env.PREVIEW_BRANCH,
-            kind: process.env.PREVIEW_KIND,
-            url: process.env.PREVIEW_URL,
+          const mainDeployment = {
+            id: 'main',
+            name: 'main',
+            branch: 'main',
+            kind: 'main',
+            url: process.env.MAIN_URL,
             updatedAt: new Date().toISOString(),
-            sha: process.env.SHA,
+            sha: process.env.MAIN_SHA,
           };
 
-          if (process.env.PREVIEW_PR_NUMBER) {
-            current.prNumber = Number(process.env.PREVIEW_PR_NUMBER);
-          }
-
           const deployments = existing.deployments
-            .filter((deployment) => deployment.id !== current.id)
+            .filter((deployment) => deployment.id !== 'main')
+            .filter((deployment) => deployment.id !== process.env.PREVIEW_ID)
+            .filter((deployment) => deployment.id.startsWith('pr-'))
             .filter((deployment) => fs.existsSync(path.join('previews', deployment.id, 'index.html')));
 
-          deployments.push(current);
+          deployments.push(mainDeployment);
+
+          if (process.env.SHOULD_BUILD_PREVIEW === 'true') {
+            const previewDeployment = {
+              id: process.env.PREVIEW_ID,
+              name: process.env.PREVIEW_NAME,
+              branch: process.env.PREVIEW_BRANCH,
+              kind: process.env.PREVIEW_KIND,
+              url: process.env.PREVIEW_URL,
+              updatedAt: new Date().toISOString(),
+              sha: process.env.PREVIEW_SHA,
+            };
+
+            if (process.env.PREVIEW_PR_NUMBER) {
+              previewDeployment.prNumber = Number(process.env.PREVIEW_PR_NUMBER);
+            }
+
+            deployments.push(previewDeployment);
+          }
+
           deployments.sort((first, second) => {
             if (first.id === 'main') return -1;
             if (second.id === 'main') return 1;
@@ -219,5 +231,5 @@ jobs:
             exit 0
           fi
 
-          git commit -m "Deploy ${PREVIEW_ID} preview"
+          git commit -m "Deploy GitHub Pages"
           git push origin gh-pages
