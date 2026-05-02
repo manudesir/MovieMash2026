@@ -108,6 +108,15 @@ function ratingChangesForUpdate(
   ];
 }
 
+function getScopedStates(states: RankingItemState[], itemIds?: readonly string[]) {
+  if (!itemIds) {
+    return states;
+  }
+
+  const itemIdSet = new Set(itemIds);
+  return states.filter((state) => itemIdSet.has(state.itemId));
+}
+
 export async function initializeRankingStates(items: ComparableItem[]) {
   const now = Date.now();
   const existingStates = await db.rankingStates.toArray();
@@ -121,8 +130,12 @@ export async function initializeRankingStates(items: ComparableItem[]) {
   }
 }
 
-export function listRankingStates() {
-  return db.rankingStates.toArray();
+export function listRankingStates(itemIds?: readonly string[]) {
+  if (!itemIds) {
+    return db.rankingStates.toArray();
+  }
+
+  return db.rankingStates.bulkGet([...itemIds]).then((states) => states.filter((state) => state !== undefined));
 }
 
 export function listComparisonRecords() {
@@ -160,28 +173,32 @@ export async function setMetaBoolean(key: string, value: boolean) {
   await db.meta.put({ key, value });
 }
 
-export async function persistOutcome(outcome: ComparisonOutcome): Promise<PersistOutcomeResult> {
+export async function persistOutcome(
+  outcome: ComparisonOutcome,
+  activeScopeItemIds?: readonly string[],
+): Promise<PersistOutcomeResult> {
   return db.transaction('rw', db.rankingStates, db.comparisons, async () => {
     const now = Date.now();
     const states = await db.rankingStates.toArray();
+    const scopedStates = getScopedStates(states, activeScopeItemIds);
     const statesById = new Map(states.map((state) => [state.itemId, state]));
     const outcomeIds = idsForOutcome(outcome);
 
     if (outcomeIds.some((id) => !statesById.has(id))) {
-      return { applied: false, reason: 'missingState', states };
+      return { applied: false, reason: 'missingState', states: scopedStates };
     }
 
     if (outcome.type === 'notSeen') {
-      const activeCount = states.filter((state) => state.active).length;
+      const activeCount = scopedStates.filter((state) => state.active).length;
 
       if (activeCount <= MINIMUM_ACTIVE_ITEMS) {
-        return { applied: false, reason: 'minimumActiveItems', states };
+        return { applied: false, reason: 'minimumActiveItems', states: scopedStates };
       }
 
       const itemState = statesById.get(outcome.itemId);
 
       if (!itemState) {
-        return { applied: false, reason: 'missingState', states };
+        return { applied: false, reason: 'missingState', states: scopedStates };
       }
 
       await db.rankingStates.put({
@@ -191,14 +208,14 @@ export async function persistOutcome(outcome: ComparisonOutcome): Promise<Persis
         updatedAt: now,
       });
       await db.comparisons.put(createRecord(outcome, now));
-      return { applied: true, states: await db.rankingStates.toArray() };
+      return { applied: true, states: getScopedStates(await db.rankingStates.toArray(), activeScopeItemIds) };
     }
 
     const beforeStates = idsForOutcome(outcome).map((itemId) => statesById.get(itemId));
     const updated = applyDecidedOutcome(statesById, outcome, now);
 
     if (!updated || !beforeStates[0] || !beforeStates[1]) {
-      return { applied: false, reason: 'missingState', states };
+      return { applied: false, reason: 'missingState', states: scopedStates };
     }
 
     await db.rankingStates.bulkPut([updated.left, updated.right]);
@@ -209,24 +226,28 @@ export async function persistOutcome(outcome: ComparisonOutcome): Promise<Persis
         ratingChangesForUpdate(beforeStates[0], beforeStates[1], updated.left, updated.right),
       ),
     );
-    return { applied: true, states: await db.rankingStates.toArray() };
+    return { applied: true, states: getScopedStates(await db.rankingStates.toArray(), activeScopeItemIds) };
   });
 }
 
-export async function markRankingItemNotSeen(itemId: string): Promise<PersistOutcomeResult> {
+export async function markRankingItemNotSeen(
+  itemId: string,
+  activeScopeItemIds?: readonly string[],
+): Promise<PersistOutcomeResult> {
   return db.transaction('rw', db.rankingStates, db.comparisons, async () => {
     const now = Date.now();
     const states = await db.rankingStates.toArray();
+    const scopedStates = getScopedStates(states, activeScopeItemIds);
     const itemState = states.find((state) => state.itemId === itemId);
 
     if (!itemState) {
-      return { applied: false, reason: 'missingState', states };
+      return { applied: false, reason: 'missingState', states: scopedStates };
     }
 
-    const activeCount = states.filter((state) => state.active).length;
+    const activeCount = scopedStates.filter((state) => state.active).length;
 
     if (activeCount <= MINIMUM_ACTIVE_ITEMS) {
-      return { applied: false, reason: 'minimumActiveItems', states };
+      return { applied: false, reason: 'minimumActiveItems', states: scopedStates };
     }
 
     await db.rankingStates.put({
@@ -243,7 +264,7 @@ export async function markRankingItemNotSeen(itemId: string): Promise<PersistOut
       createdAt: now,
     });
 
-    return { applied: true, states: await db.rankingStates.toArray() };
+    return { applied: true, states: getScopedStates(await db.rankingStates.toArray(), activeScopeItemIds) };
   });
 }
 
