@@ -24,9 +24,24 @@ function recordIsInCatalog(recordItemIds: Set<string>, recordItemId: string | un
 export function RankingPage({ catalog }: RankingPageProps) {
   const items = filmItemsByCatalogId[catalog.id];
   const itemIds = useMemo(() => items.map((item) => item.id), [items]);
+  const fallbackStates = useMemo(() => {
+    const now = Date.now();
+    return itemIds.map((itemId) => ({
+      itemId,
+      rating: 1000,
+      appearances: 0,
+      wins: 0,
+      losses: 0,
+      ties: 0,
+      active: true,
+      notSeen: false,
+      createdAt: now,
+      updatedAt: now,
+    }));
+  }, [itemIds]);
   const itemById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
   const itemIdSet = useMemo(() => new Set(itemIds), [itemIds]);
-  const states = useLiveQuery(() => listRankingStates(itemIds), [itemIds], []);
+  const states = useLiveQuery(() => listRankingStates(itemIds), [itemIds], fallbackStates);
   const records = useLiveQuery(listComparisonRecords, [], []);
   const catalogRecords = records.filter(
     (record) =>
