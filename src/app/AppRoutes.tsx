@@ -11,20 +11,15 @@ import { RankingPage } from '../modules/ranking/RankingPage';
 import { DevDatabaseTransfer } from './DevDatabaseTransfer';
 import { isLocalDevOrigin } from './devDatabaseTransferProtocol';
 
-type CatalogRoutesProps = {
+type CatalogPageProps = {
   catalog: FilmCatalog;
 };
 
-function CatalogRoutes({ catalog }: CatalogRoutesProps) {
+function ComparisonPage({ catalog }: CatalogPageProps) {
   const items = filmItemsByCatalogId[catalog.id];
   const flow = useComparisonFlow(items);
 
-  return (
-    <>
-      <Route path={catalog.comparisonPath} element={<ComparisonScreen flow={flow} catalog={catalog} />} />
-      <Route path={catalog.rankingPath} element={<RankingPage catalog={catalog} />} />
-    </>
-  );
+  return <ComparisonScreen flow={flow} catalog={catalog} />;
 }
 
 export function AppRoutes() {
@@ -33,8 +28,10 @@ export function AppRoutes() {
   return (
     <HashRouter>
       <Routes>
-        <CatalogRoutes catalog={defaultFilmCatalog} />
-        <CatalogRoutes catalog={actionFilmCatalog} />
+        <Route path={defaultFilmCatalog.comparisonPath} element={<ComparisonPage catalog={defaultFilmCatalog} />} />
+        <Route path={defaultFilmCatalog.rankingPath} element={<RankingPage catalog={defaultFilmCatalog} />} />
+        <Route path={actionFilmCatalog.comparisonPath} element={<ComparisonPage catalog={actionFilmCatalog} />} />
+        <Route path={actionFilmCatalog.rankingPath} element={<RankingPage catalog={actionFilmCatalog} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {showDevDatabaseTransfer ? <DevDatabaseTransfer /> : null}
