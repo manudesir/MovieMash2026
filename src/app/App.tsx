@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { filmItems } from '../modules/content/filmSource';
+import { allFilmItems } from '../modules/content/filmSource';
 import { initializeRankingStates } from '../modules/persistence/rankingRepository';
 import { AppLoading } from './AppLoading';
 import { AppRoutes } from './AppRoutes';
@@ -10,11 +10,11 @@ export function App() {
 
   useProductionDatabaseImport();
 
-  // Prepare IndexedDB from the frozen catalog before screens read user state.
+  // Prepare IndexedDB from every frozen catalog before screens read user state.
   useEffect(() => {
     let mounted = true;
 
-    void initializeRankingStates(filmItems).then(() => {
+    void initializeRankingStates(allFilmItems).then(() => {
       if (mounted) {
         setReady(true);
       }
