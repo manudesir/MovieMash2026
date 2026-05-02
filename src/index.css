@@ -643,7 +643,17 @@ img {
   background: rgba(23, 33, 27, 0.38);
 }
 
+.fight-modal-backdrop__dismiss {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
 .fight-modal {
+  position: relative;
+  z-index: 1;
   width: min(100%, 620px);
   max-height: min(76svh, 680px);
   overflow: auto;

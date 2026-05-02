@@ -32,7 +32,7 @@ function getPreviewContext() {
 }
 
 export function BranchPreviewSelector() {
-  const previewContext = useMemo(getPreviewContext, []);
+  const previewContext = useMemo(() => getPreviewContext(), []);
   const [deployments, setDeployments] = useState<PreviewDeployment[]>([]);
 
   useEffect(() => {

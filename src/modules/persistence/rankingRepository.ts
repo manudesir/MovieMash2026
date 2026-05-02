@@ -135,7 +135,7 @@ export function listRankingStates(itemIds?: readonly string[]) {
     return db.rankingStates.toArray();
   }
 
-  return db.rankingStates.bulkGet([...itemIds]).then((states) => states.filter((state) => state !== undefined));
+  return db.rankingStates.where('itemId').anyOf([...itemIds]).toArray();
 }
 
 export function listComparisonRecords() {

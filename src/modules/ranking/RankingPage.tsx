@@ -25,7 +25,6 @@ export function RankingPage({ catalog }: RankingPageProps) {
   const items = filmItemsByCatalogId[catalog.id];
   const itemIds = useMemo(() => items.map((item) => item.id), [items]);
   const fallbackStates = useMemo(() => {
-    const now = Date.now();
     return itemIds.map((itemId) => ({
       itemId,
       rating: 1000,
@@ -35,8 +34,8 @@ export function RankingPage({ catalog }: RankingPageProps) {
       ties: 0,
       active: true,
       notSeen: false,
-      createdAt: now,
-      updatedAt: now,
+      createdAt: 0,
+      updatedAt: 0,
     }));
   }, [itemIds]);
   const itemById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
@@ -53,7 +52,8 @@ export function RankingPage({ catalog }: RankingPageProps) {
   );
   const [selectedItemId, setSelectedItemId] = useState<string | undefined>();
   const [rankingMessage, setRankingMessage] = useState<string | undefined>();
-  const rankedStates = getOrderedRanking(states);
+  const [locallyRemovedItemIds, setLocallyRemovedItemIds] = useState<Set<string>>(() => new Set());
+  const rankedStates = getOrderedRanking(states).filter((state) => !locallyRemovedItemIds.has(state.itemId));
   const selectedItem = selectedItemId ? itemById.get(selectedItemId) : undefined;
   const canRemoveFromRanking = rankedStates.length > MINIMUM_ACTIVE_ITEMS;
 
@@ -62,6 +62,7 @@ export function RankingPage({ catalog }: RankingPageProps) {
     console.log(result.applied ? `${itemLabel} not seen` : `${itemLabel} not seen blocked: ${result.reason}`);
 
     if (result.applied) {
+      setLocallyRemovedItemIds((current) => new Set(current).add(itemId));
       setRankingMessage(`${itemLabel} removed`);
       return true;
     }

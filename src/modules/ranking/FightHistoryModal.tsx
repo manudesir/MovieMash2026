@@ -80,13 +80,12 @@ export function FightHistoryModal({ item, records, itemById, onClose }: FightHis
     .sort((first, second) => second.record.createdAt - first.record.createdAt);
 
   return (
-    <div className="fight-modal-backdrop" role="presentation" onClick={onClose}>
+    <div className="fight-modal-backdrop" role="presentation">
       <section
         className="fight-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="fight-modal-title"
-        onClick={(event) => event.stopPropagation()}
       >
         <header className="fight-modal__header">
           <div>
@@ -120,6 +119,12 @@ export function FightHistoryModal({ item, records, itemById, onClose }: FightHis
           </ol>
         )}
       </section>
+      <button
+        type="button"
+        className="fight-modal-backdrop__dismiss"
+        onClick={onClose}
+        aria-label="Close fight history from backdrop"
+      />
     </div>
   );
 }
